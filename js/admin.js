@@ -5024,3 +5024,264 @@ origTemplateClick.forEach(card => {
         setTimeout(generateAiPrompt, 100);
     });
 });
+
+// =========================================================
+// ===== API FOOTBALL: Real Data Integration =====
+// =========================================================
+
+// Load saved config when panel opens
+document.querySelector('.admin-nav-link[data-panel="football-api"]')?.addEventListener('click', loadFootballApiConfig);
+
+async function loadFootballApiConfig() {
+    try {
+        const config = await apiGet('football-api/config');
+        if (config.apiKey) document.getElementById('fbApiKey').value = config.apiKey;
+        if (config.teamId) document.getElementById('fbTeamId').value = config.teamId;
+        if (config.leagueId) document.getElementById('fbLeagueId').value = config.leagueId;
+        if (config.teamName) document.getElementById('fbTeamName').value = config.teamName;
+    } catch(e) { /* first time, no config yet */ }
+}
+
+async function saveFootballApiConfig() {
+    const apiKey = document.getElementById('fbApiKey').value.trim();
+    const teamId = document.getElementById('fbTeamId').value;
+    const leagueId = document.getElementById('fbLeagueId').value;
+    const teamName = document.getElementById('fbTeamName').value.trim();
+    const statusEl = document.getElementById('fbConfigStatus');
+
+    if (!apiKey || apiKey.length < 10) {
+        showToast('Veuillez entrer une clé API valide', 'error');
+        return;
+    }
+
+    statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
+    try {
+        await apiPut('football-api/config', { apiKey, teamId: parseInt(teamId), leagueId: parseInt(leagueId), teamName });
+        statusEl.innerHTML = '<span style="color:#27ae60;"><i class="fas fa-check"></i> Configuré !</span>';
+        showToast('Configuration API Football sauvegardée !');
+    } catch(e) {
+        statusEl.innerHTML = '<span style="color:#e74c3c;"><i class="fas fa-times"></i> Erreur</span>';
+        showToast(e.message, 'error');
+    }
+}
+
+async function checkFootballApiStatus() {
+    const quotaEl = document.getElementById('fbApiQuota');
+    quotaEl.style.display = 'block';
+    quotaEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:#aaa;"></i> Vérification...';
+
+    try {
+        const status = await apiGet('football-api/status');
+        const pct = Math.round((status.requestsUsed / status.requestsLimit) * 100);
+        const color = pct > 80 ? '#e74c3c' : pct > 50 ? '#f39c12' : '#27ae60';
+        quotaEl.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="color:#fff;font-weight:bold;"><i class="fas fa-signal"></i> Plan: ${status.plan}</span>
+                <span style="color:${status.active ? '#27ae60' : '#e74c3c'};">${status.active ? '● Actif' : '● Inactif'}</span>
+            </div>
+            <div style="background:#222;border-radius:8px;height:20px;overflow:hidden;margin-bottom:5px;">
+                <div style="width:${pct}%;height:100%;background:${color};border-radius:8px;transition:width 0.5s;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;color:#aaa;font-size:12px;">
+                <span>${status.requestsUsed} / ${status.requestsLimit} requêtes utilisées</span>
+                <span>${status.remaining} restantes</span>
+            </div>`;
+    } catch(e) {
+        quotaEl.innerHTML = `<span style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> ${e.message}</span>`;
+    }
+}
+
+function showSyncResult(message, isError) {
+    const el = document.getElementById('fbSyncResult');
+    el.style.display = 'block';
+    el.style.background = isError ? '#1a0505' : '#051a05';
+    el.style.border = `1px solid ${isError ? '#e74c3c' : '#27ae60'}`;
+    el.innerHTML = `<span style="color:${isError ? '#e74c3c' : '#27ae60'};"><i class="fas fa-${isError ? 'exclamation-triangle' : 'check-circle'}"></i> ${message}</span>`;
+    setTimeout(() => { el.style.display = 'none'; }, 8000);
+}
+
+function setSyncBtnLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (loading) {
+        btn.dataset.origHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Synchronisation...';
+        btn.disabled = true;
+    } else {
+        btn.innerHTML = btn.dataset.origHtml || btn.innerHTML;
+        btn.disabled = false;
+    }
+}
+
+async function syncAll() {
+    setSyncBtnLoading('btnSyncAll', true);
+    try {
+        const result = await apiPost('football-api/sync-all', {});
+        showSyncResult(
+            `Sync complet ! ${result.standings} équipes classement, ${result.matches} nouveaux matchs, ` +
+            `${result.matchesUpdated} mis à jour, ${result.fixtures} nouveaux matchs au calendrier`
+        );
+        showToast('Synchronisation complète réussie !');
+    } catch(e) {
+        showSyncResult(e.message, true);
+    }
+    setSyncBtnLoading('btnSyncAll', false);
+}
+
+async function syncStandings() {
+    setSyncBtnLoading('btnSyncStandings', true);
+    try {
+        const result = await apiPost('football-api/sync-standings', {});
+        showSyncResult(`${result.imported} équipes importées dans le classement`);
+        showToast('Classement synchronisé !');
+    } catch(e) {
+        showSyncResult(e.message, true);
+    }
+    setSyncBtnLoading('btnSyncStandings', false);
+}
+
+async function syncMatches() {
+    setSyncBtnLoading('btnSyncMatches', true);
+    try {
+        const result = await apiPost('football-api/sync-matches', { last: 15 });
+        showSyncResult(`${result.imported} nouveaux matchs importés, ${result.updated} mis à jour`);
+        showToast('Matchs synchronisés !');
+    } catch(e) {
+        showSyncResult(e.message, true);
+    }
+    setSyncBtnLoading('btnSyncMatches', false);
+}
+
+async function syncFixtures() {
+    setSyncBtnLoading('btnSyncFixtures', true);
+    try {
+        const result = await apiPost('football-api/sync-fixtures', { next: 10 });
+        showSyncResult(`${result.imported} nouveaux matchs ajoutés au calendrier`);
+        showToast('Calendrier synchronisé !');
+    } catch(e) {
+        showSyncResult(e.message, true);
+    }
+    setSyncBtnLoading('btnSyncFixtures', false);
+}
+
+async function previewStandings() {
+    const area = document.getElementById('fbPreviewArea');
+    area.innerHTML = '<p style="color:#aaa;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement classement...</p>';
+    try {
+        const standings = await apiGet('football-api/standings');
+        if (!standings.length) { area.innerHTML = '<p style="color:#e74c3c;">Aucun classement trouvé</p>'; return; }
+        let html = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead><tr style="color:#aaa;border-bottom:1px solid #333;">
+                <th style="padding:8px;text-align:left;">#</th>
+                <th style="padding:8px;text-align:left;">Équipe</th>
+                <th style="padding:8px;text-align:center;">MJ</th>
+                <th style="padding:8px;text-align:center;">V</th>
+                <th style="padding:8px;text-align:center;">N</th>
+                <th style="padding:8px;text-align:center;">D</th>
+                <th style="padding:8px;text-align:center;">BP</th>
+                <th style="padding:8px;text-align:center;">BC</th>
+                <th style="padding:8px;text-align:center;">Pts</th>
+                <th style="padding:8px;text-align:center;">Forme</th>
+            </tr></thead><tbody>`;
+        standings.forEach((t, i) => {
+            const rowStyle = t.isOurTeam ? 'background:#1a0a0a;font-weight:bold;' : '';
+            const formBadges = (t.form || []).map(f => {
+                const c = f === 'W' ? '#27ae60' : f === 'D' ? '#f39c12' : '#e74c3c';
+                return `<span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;border-radius:3px;background:${c};color:#fff;font-size:10px;margin:0 1px;">${f}</span>`;
+            }).join('');
+            html += `<tr style="border-bottom:1px solid #222;${rowStyle}">
+                <td style="padding:8px;color:#fff;">${i + 1}</td>
+                <td style="padding:8px;color:#fff;">${t.isOurTeam ? '⭐ ' : ''}${t.name}</td>
+                <td style="padding:8px;text-align:center;color:#aaa;">${t.played}</td>
+                <td style="padding:8px;text-align:center;color:#27ae60;">${t.won}</td>
+                <td style="padding:8px;text-align:center;color:#f39c12;">${t.drawn}</td>
+                <td style="padding:8px;text-align:center;color:#e74c3c;">${t.lost}</td>
+                <td style="padding:8px;text-align:center;color:#aaa;">${t.goalsFor}</td>
+                <td style="padding:8px;text-align:center;color:#aaa;">${t.goalsAgainst}</td>
+                <td style="padding:8px;text-align:center;color:#fff;font-weight:bold;">${t.points}</td>
+                <td style="padding:8px;text-align:center;">${formBadges}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        area.innerHTML = html;
+    } catch(e) {
+        area.innerHTML = `<p style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> ${e.message}</p>`;
+    }
+}
+
+async function previewFixtures() {
+    const area = document.getElementById('fbPreviewArea');
+    area.innerHTML = '<p style="color:#aaa;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement matchs...</p>';
+    try {
+        const fixtures = await apiGet('football-api/team-fixtures?last=10&next=10');
+        if (!fixtures.length) { area.innerHTML = '<p style="color:#e74c3c;">Aucun match trouvé</p>'; return; }
+
+        // Sort by date
+        fixtures.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        let html = '<div style="display:grid;gap:10px;">';
+        fixtures.forEach(f => {
+            const statusColor = f.status === 'finished' ? '#27ae60' : f.status === 'live' ? '#e74c3c' : '#f39c12';
+            const statusText = f.status === 'finished' ? 'Terminé' : f.status === 'live' ? 'EN DIRECT' : 'À venir';
+            const scoreDisplay = f.status === 'finished' ? `<span style="font-size:18px;font-weight:bold;color:#fff;">${f.homeScore} - ${f.awayScore}</span>` :
+                                 f.status === 'live' ? `<span style="font-size:18px;font-weight:bold;color:#e74c3c;">${f.homeScore ?? 0} - ${f.awayScore ?? 0}</span>` :
+                                 `<span style="color:#aaa;">${f.time || 'TBD'}</span>`;
+            const isCSS = f.isHome || /sfax/i.test(f.homeTeam) || /sfax/i.test(f.awayTeam);
+
+            html += `<div style="background:${isCSS ? '#1a0a0a' : '#0a0a0a'};padding:12px 15px;border-radius:8px;border:1px solid #222;display:flex;align-items:center;justify-content:space-between;">
+                <div style="flex:1;text-align:right;color:#fff;font-size:14px;">${f.homeTeam}</div>
+                <div style="flex:0 0 120px;text-align:center;">
+                    ${scoreDisplay}
+                    <div style="font-size:10px;color:${statusColor};margin-top:2px;">${statusText}</div>
+                </div>
+                <div style="flex:1;text-align:left;color:#fff;font-size:14px;">${f.awayTeam}</div>
+                <div style="flex:0 0 100px;text-align:right;color:#666;font-size:11px;">
+                    ${f.date}<br>${f.competition}
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        area.innerHTML = html;
+    } catch(e) {
+        area.innerHTML = `<p style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> ${e.message}</p>`;
+    }
+}
+
+async function previewTopScorers() {
+    const area = document.getElementById('fbPreviewArea');
+    area.innerHTML = '<p style="color:#aaa;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement buteurs...</p>';
+    try {
+        const scorers = await apiGet('football-api/top-scorers');
+        if (!scorers.length) { area.innerHTML = '<p style="color:#e74c3c;">Aucun buteur trouvé</p>'; return; }
+
+        let html = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead><tr style="color:#aaa;border-bottom:1px solid #333;">
+                <th style="padding:8px;text-align:left;">#</th>
+                <th style="padding:8px;text-align:left;">Joueur</th>
+                <th style="padding:8px;text-align:left;">Équipe</th>
+                <th style="padding:8px;text-align:center;">Matchs</th>
+                <th style="padding:8px;text-align:center;">Buts</th>
+                <th style="padding:8px;text-align:center;">Passes D.</th>
+                <th style="padding:8px;text-align:center;">Note</th>
+            </tr></thead><tbody>`;
+        scorers.forEach((s, i) => {
+            const isCSS = /sfax/i.test(s.team);
+            html += `<tr style="border-bottom:1px solid #222;${isCSS ? 'background:#1a0a0a;font-weight:bold;' : ''}">
+                <td style="padding:8px;color:#fff;">${i + 1}</td>
+                <td style="padding:8px;color:#fff;">
+                    ${s.photo ? `<img src="${s.photo}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:6px;">` : ''}
+                    ${s.name}
+                </td>
+                <td style="padding:8px;color:#aaa;">${s.team}</td>
+                <td style="padding:8px;text-align:center;color:#aaa;">${s.matches}</td>
+                <td style="padding:8px;text-align:center;color:#27ae60;font-weight:bold;">${s.goals}</td>
+                <td style="padding:8px;text-align:center;color:#3498db;">${s.assists || 0}</td>
+                <td style="padding:8px;text-align:center;color:#f39c12;">${s.rating ? s.rating.toFixed(1) : '-'}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        area.innerHTML = html;
+    } catch(e) {
+        area.innerHTML = `<p style="color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i> ${e.message}</p>`;
+    }
+}

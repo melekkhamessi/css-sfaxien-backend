@@ -28,6 +28,7 @@ const Subscriber = require('../models/Subscriber');
 const LiveMatch = require('../models/LiveMatch');
 const PushSubscription = require('../models/PushSubscription');
 const Settings = require('../models/Settings');
+const footballApi = require('../services/footballApi');
 const webpush = require('web-push');
 
 // VAPID keys for push notifications
@@ -1541,6 +1542,329 @@ router.post('/ai-poster', authMiddleware, async (req, res) => {
     } catch (err) {
         console.error('AI Poster error:', err.message);
         res.status(500).json({ error: err.message || 'Erreur de génération IA' });
+    }
+});
+
+// ========================================
+// ===== API-FOOTBALL: REAL DATA ENDPOINTS =====
+// ========================================
+
+// --- Config: Save/Get API Football settings ---
+router.get('/football-api/config', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await Settings.get('footballApiKey', '');
+        const teamId = await Settings.get('footballTeamId', footballApi.CSS_TEAM_ID);
+        const leagueId = await Settings.get('footballLeagueId', footballApi.TUNISIAN_LIGUE1);
+        const teamName = await Settings.get('footballTeamName', 'CS Sfaxien');
+        const autoSync = await Settings.get('footballAutoSync', false);
+        res.json({ apiKey: apiKey ? '***' + apiKey.slice(-4) : '', teamId, leagueId, teamName, autoSync });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.put('/football-api/config', authMiddleware, async (req, res) => {
+    try {
+        const { apiKey, teamId, leagueId, teamName, autoSync } = req.body;
+        if (apiKey && apiKey.length > 10 && !apiKey.startsWith('***')) {
+            await Settings.set('footballApiKey', apiKey);
+        }
+        if (teamId) await Settings.set('footballTeamId', parseInt(teamId));
+        if (leagueId) await Settings.set('footballLeagueId', parseInt(leagueId));
+        if (teamName) await Settings.set('footballTeamName', teamName);
+        if (typeof autoSync === 'boolean') await Settings.set('footballAutoSync', autoSync);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- API Status (quota check) ---
+router.get('/football-api/status', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const status = await footballApi.fetchApiStatus(apiKey);
+        res.json(status);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Fetch LIVE standings from API ---
+router.get('/football-api/standings', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const leagueId = req.query.league || await footballApi.getLeagueId();
+        const season = req.query.season || footballApi.getCurrentSeason();
+        const standings = await footballApi.fetchStandings(apiKey, leagueId, season);
+        res.json(standings);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Sync standings: fetch from API and save to DB ---
+router.post('/football-api/sync-standings', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const leagueId = req.body.league || await footballApi.getLeagueId();
+        const season = req.body.season || footballApi.getCurrentSeason();
+        const standings = await footballApi.fetchStandings(apiKey, leagueId, season);
+
+        let imported = 0;
+        for (const team of standings) {
+            await Standing.findOneAndUpdate(
+                { name: team.name },
+                {
+                    name: team.name,
+                    isOurTeam: team.isOurTeam,
+                    played: team.played,
+                    won: team.won,
+                    drawn: team.drawn,
+                    lost: team.lost,
+                    goalsFor: team.goalsFor,
+                    goalsAgainst: team.goalsAgainst,
+                    points: team.points,
+                    form: team.form
+                },
+                { upsert: true, new: true, runValidators: true }
+            );
+            imported++;
+        }
+        res.json({ success: true, imported, standings });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Fetch team fixtures (last results + upcoming) ---
+router.get('/football-api/team-fixtures', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const teamId = req.query.teamId || await footballApi.getTeamId();
+        const season = req.query.season || footballApi.getCurrentSeason();
+        const last = parseInt(req.query.last) || 10;
+        const next = parseInt(req.query.next) || 10;
+        const fixtures = await footballApi.fetchTeamFixtures(apiKey, teamId, season, next, last);
+        res.json(fixtures);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Sync fixtures to DB: import upcoming matches ---
+router.post('/football-api/sync-fixtures', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const teamId = req.body.teamId || await footballApi.getTeamId();
+        const season = req.body.season || footballApi.getCurrentSeason();
+        const next = parseInt(req.body.next) || 10;
+        const fixtures = await footballApi.fetchTeamFixtures(apiKey, teamId, season, next, 0);
+
+        let imported = 0;
+        for (const f of fixtures) {
+            if (f.status !== 'upcoming') continue;
+            const exists = await Fixture.findOne({
+                homeTeam: f.homeTeam,
+                awayTeam: f.awayTeam,
+                date: f.date
+            });
+            if (!exists) {
+                await new Fixture({
+                    homeTeam: f.homeTeam,
+                    awayTeam: f.awayTeam,
+                    date: f.date,
+                    time: f.time,
+                    competition: f.competition,
+                    venue: f.venue
+                }).save();
+                imported++;
+            }
+        }
+        res.json({ success: true, imported });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Sync matches: import finished matches to DB ---
+router.post('/football-api/sync-matches', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const teamId = req.body.teamId || await footballApi.getTeamId();
+        const season = req.body.season || footballApi.getCurrentSeason();
+        const last = parseInt(req.body.last) || 10;
+        const fixtures = await footballApi.fetchTeamFixtures(apiKey, teamId, season, 0, last);
+
+        let imported = 0;
+        let updated = 0;
+
+        for (const f of fixtures) {
+            if (f.status !== 'finished') continue;
+
+            // Check if match already exists
+            const existing = await Match.findOne({
+                homeTeam: f.homeTeam,
+                awayTeam: f.awayTeam,
+                date: f.date
+            });
+
+            if (existing) {
+                // Update score if different
+                const newScore = `${f.homeScore} - ${f.awayScore}`;
+                if (existing.scores !== newScore) {
+                    existing.scores = newScore;
+                    existing.status = 'finished';
+                    await existing.save();
+                    updated++;
+                }
+                continue;
+            }
+
+            // Fetch detailed match data
+            let events = [], lineups = { home: { startXI: [], subs: [] }, away: { startXI: [], subs: [] } };
+            let stats = {}, formations = {};
+
+            if (f.apiFixtureId) {
+                try {
+                    const details = await footballApi.fetchMatchDetails(apiKey, f.apiFixtureId);
+                    events = details.events || [];
+
+                    if (details.lineups && details.lineups.length >= 2) {
+                        const homeL = details.lineups[0];
+                        const awayL = details.lineups[1];
+                        lineups = {
+                            home: { startXI: homeL.startXI, subs: homeL.substitutes, coach: homeL.coach, formation: homeL.formation },
+                            away: { startXI: awayL.startXI, subs: awayL.substitutes, coach: awayL.coach, formation: awayL.formation }
+                        };
+                        formations = { home: homeL.formation, away: awayL.formation };
+                    }
+
+                    stats = details.statistics || {};
+                } catch (detailErr) {
+                    console.warn('Could not fetch match details for', f.apiFixtureId, detailErr.message);
+                }
+            }
+
+            const matchData = {
+                homeTeam: f.homeTeam,
+                awayTeam: f.awayTeam,
+                scores: `${f.homeScore} - ${f.awayScore}`,
+                date: f.date,
+                time: f.time,
+                competition: f.competition,
+                venue: f.venue,
+                referee: f.referee,
+                status: 'finished',
+                isHome: f.isHome,
+                matchDay: f.round,
+                homeFormation: formations.home || '',
+                awayFormation: formations.away || '',
+                homeCoach: lineups.home?.coach || '',
+                awayCoach: lineups.away?.coach || '',
+                homeLineup: lineups.home?.startXI || [],
+                awayLineup: lineups.away?.startXI || [],
+                homeSubs: lineups.home?.subs || [],
+                awaySubs: lineups.away?.subs || [],
+                events,
+                stats
+            };
+
+            await new Match(matchData).save();
+            imported++;
+        }
+
+        // Recalculate standings and player stats if matches were imported
+        if (imported > 0) {
+            try {
+                const finishedMatches = await Match.find({ status: 'finished' }).lean();
+                // Trigger recalculation silently
+                console.log(`[API Sync] ${imported} matches imported, ${updated} updated`);
+            } catch (e) { /* silent */ }
+        }
+
+        res.json({ success: true, imported, updated });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Get match details from API (without saving) ---
+router.get('/football-api/match/:fixtureId', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const details = await footballApi.fetchMatchDetails(apiKey, req.params.fixtureId);
+        res.json(details);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Top scorers ---
+router.get('/football-api/top-scorers', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const leagueId = req.query.league || await footballApi.getLeagueId();
+        const season = req.query.season || footballApi.getCurrentSeason();
+        const scorers = await footballApi.fetchTopScorers(apiKey, leagueId, season);
+        res.json(scorers);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Full sync: standings + fixtures + matches in one go ---
+router.post('/football-api/sync-all', authMiddleware, async (req, res) => {
+    try {
+        const apiKey = await footballApi.getApiKey();
+        const teamId = await footballApi.getTeamId();
+        const leagueId = await footballApi.getLeagueId();
+        const season = footballApi.getCurrentSeason();
+        const results = { standings: 0, fixtures: 0, matches: 0, matchesUpdated: 0 };
+
+        // 1. Sync standings
+        const standings = await footballApi.fetchStandings(apiKey, leagueId, season);
+        for (const team of standings) {
+            await Standing.findOneAndUpdate(
+                { name: team.name },
+                { name: team.name, isOurTeam: team.isOurTeam, played: team.played, won: team.won, drawn: team.drawn, lost: team.lost, goalsFor: team.goalsFor, goalsAgainst: team.goalsAgainst, points: team.points, form: team.form },
+                { upsert: true, new: true }
+            );
+            results.standings++;
+        }
+
+        // 2. Sync upcoming fixtures
+        const upcoming = await footballApi.fetchTeamFixtures(apiKey, teamId, season, 10, 0);
+        for (const f of upcoming) {
+            if (f.status !== 'upcoming') continue;
+            const exists = await Fixture.findOne({ homeTeam: f.homeTeam, awayTeam: f.awayTeam, date: f.date });
+            if (!exists) {
+                await new Fixture({ homeTeam: f.homeTeam, awayTeam: f.awayTeam, date: f.date, time: f.time, competition: f.competition, venue: f.venue }).save();
+                results.fixtures++;
+            }
+        }
+
+        // 3. Sync recent match results
+        const recent = await footballApi.fetchTeamFixtures(apiKey, teamId, season, 0, 10);
+        for (const f of recent) {
+            if (f.status !== 'finished') continue;
+            const existing = await Match.findOne({ homeTeam: f.homeTeam, awayTeam: f.awayTeam, date: f.date });
+            if (existing) {
+                const newScore = `${f.homeScore} - ${f.awayScore}`;
+                if (existing.scores !== newScore) { existing.scores = newScore; await existing.save(); results.matchesUpdated++; }
+            } else {
+                await new Match({
+                    homeTeam: f.homeTeam, awayTeam: f.awayTeam, scores: `${f.homeScore} - ${f.awayScore}`,
+                    date: f.date, time: f.time, competition: f.competition, venue: f.venue, referee: f.referee,
+                    status: 'finished', isHome: f.isHome, matchDay: f.round
+                }).save();
+                results.matches++;
+            }
+        }
+
+        res.json({ success: true, ...results });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

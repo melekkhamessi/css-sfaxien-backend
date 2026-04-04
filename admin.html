@@ -582,6 +582,9 @@
             <button class="admin-nav-link" data-panel="posters">
                 <i class="fas fa-palette"></i> Affiches & Design
             </button>
+            <button class="admin-nav-link" data-panel="football-api">
+                <i class="fas fa-futbol"></i> API Football
+            </button>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -3208,6 +3211,111 @@
                                 <p style="color:#aaa;text-align:center;padding:20px;">Aucune affiche générée pour le moment.</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== API FOOTBALL PANEL ==================== -->
+            <div class="admin-panel" id="panel-football-api">
+                <h2 class="admin-panel-title"><i class="fas fa-futbol"></i> API Football — Données en Temps Réel</h2>
+                <p style="color:#aaa;margin-bottom:20px;">Connectez-vous à API-Football pour importer automatiquement les scores, classements, détails de matchs et calendrier.</p>
+
+                <!-- API Config Section -->
+                <div class="admin-card" style="margin-bottom:20px;">
+                    <h3 style="color:#e74c3c;margin-bottom:15px;"><i class="fas fa-key"></i> Configuration API</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                        <div>
+                            <label style="color:#aaa;font-size:13px;display:block;margin-bottom:5px;">Clé API-Football</label>
+                            <input type="password" id="fbApiKey" placeholder="Votre clé API-Football" style="width:100%;padding:10px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box;">
+                            <small style="color:#666;"><a href="https://www.api-football.com/" target="_blank" rel="noopener noreferrer" style="color:#e74c3c;">Obtenir une clé gratuite (100 req/jour)</a></small>
+                        </div>
+                        <div>
+                            <label style="color:#aaa;font-size:13px;display:block;margin-bottom:5px;">Nom de l'équipe</label>
+                            <input type="text" id="fbTeamName" placeholder="CS Sfaxien" value="CS Sfaxien" style="width:100%;padding:10px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="color:#aaa;font-size:13px;display:block;margin-bottom:5px;">ID Équipe (API-Football)</label>
+                            <input type="number" id="fbTeamId" value="835" style="width:100%;padding:10px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box;">
+                            <small style="color:#666;">835 = CS Sfaxien</small>
+                        </div>
+                        <div>
+                            <label style="color:#aaa;font-size:13px;display:block;margin-bottom:5px;">ID Ligue</label>
+                            <input type="number" id="fbLeagueId" value="202" style="width:100%;padding:10px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box;">
+                            <small style="color:#666;">202 = Ligue 1 Tunisie</small>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <button onclick="saveFootballApiConfig()" style="padding:10px 20px;background:#e74c3c;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">
+                            <i class="fas fa-save"></i> Sauvegarder Config
+                        </button>
+                        <button onclick="checkFootballApiStatus()" style="padding:10px 20px;background:#333;color:#fff;border:none;border-radius:8px;cursor:pointer;">
+                            <i class="fas fa-heartbeat"></i> Vérifier Quota
+                        </button>
+                        <span id="fbConfigStatus" style="color:#aaa;font-size:13px;"></span>
+                    </div>
+                    <div id="fbApiQuota" style="display:none;margin-top:15px;padding:12px;background:#111;border-radius:8px;"></div>
+                </div>
+
+                <!-- Sync Actions -->
+                <div class="admin-card" style="margin-bottom:20px;">
+                    <h3 style="color:#e74c3c;margin-bottom:15px;"><i class="fas fa-sync-alt"></i> Synchronisation</h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:15px;">
+                        <!-- Sync All -->
+                        <div style="background:#111;padding:20px;border-radius:10px;border:1px solid #222;text-align:center;">
+                            <i class="fas fa-cloud-download-alt" style="font-size:28px;color:#e74c3c;margin-bottom:10px;"></i>
+                            <h4 style="color:#fff;margin-bottom:5px;">Sync Complet</h4>
+                            <p style="color:#888;font-size:12px;margin-bottom:15px;">Classement + Matchs + Calendrier</p>
+                            <button onclick="syncAll()" id="btnSyncAll" style="padding:10px 25px;background:#e74c3c;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:bold;width:100%;">
+                                <i class="fas fa-sync"></i> Tout Synchroniser
+                            </button>
+                        </div>
+                        <!-- Sync Standings -->
+                        <div style="background:#111;padding:20px;border-radius:10px;border:1px solid #222;text-align:center;">
+                            <i class="fas fa-list-ol" style="font-size:28px;color:#3498db;margin-bottom:10px;"></i>
+                            <h4 style="color:#fff;margin-bottom:5px;">Classement</h4>
+                            <p style="color:#888;font-size:12px;margin-bottom:15px;">Importer le classement actuel</p>
+                            <button onclick="syncStandings()" id="btnSyncStandings" style="padding:10px 25px;background:#3498db;color:#fff;border:none;border-radius:8px;cursor:pointer;width:100%;">
+                                <i class="fas fa-download"></i> Sync Classement
+                            </button>
+                        </div>
+                        <!-- Sync Matches -->
+                        <div style="background:#111;padding:20px;border-radius:10px;border:1px solid #222;text-align:center;">
+                            <i class="fas fa-trophy" style="font-size:28px;color:#27ae60;margin-bottom:10px;"></i>
+                            <h4 style="color:#fff;margin-bottom:5px;">Résultats</h4>
+                            <p style="color:#888;font-size:12px;margin-bottom:15px;">Importer les derniers matchs joués</p>
+                            <button onclick="syncMatches()" id="btnSyncMatches" style="padding:10px 25px;background:#27ae60;color:#fff;border:none;border-radius:8px;cursor:pointer;width:100%;">
+                                <i class="fas fa-download"></i> Sync Matchs
+                            </button>
+                        </div>
+                        <!-- Sync Fixtures -->
+                        <div style="background:#111;padding:20px;border-radius:10px;border:1px solid #222;text-align:center;">
+                            <i class="fas fa-calendar-alt" style="font-size:28px;color:#f39c12;margin-bottom:10px;"></i>
+                            <h4 style="color:#fff;margin-bottom:5px;">Calendrier</h4>
+                            <p style="color:#888;font-size:12px;margin-bottom:15px;">Importer les prochains matchs</p>
+                            <button onclick="syncFixtures()" id="btnSyncFixtures" style="padding:10px 25px;background:#f39c12;color:#fff;border:none;border-radius:8px;cursor:pointer;width:100%;">
+                                <i class="fas fa-download"></i> Sync Calendrier
+                            </button>
+                        </div>
+                    </div>
+                    <div id="fbSyncResult" style="display:none;margin-top:15px;padding:12px;border-radius:8px;"></div>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="admin-card" style="margin-bottom:20px;">
+                    <h3 style="color:#e74c3c;margin-bottom:15px;"><i class="fas fa-eye"></i> Aperçu Données API</h3>
+                    <div style="display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap;">
+                        <button onclick="previewStandings()" style="padding:8px 16px;background:#333;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+                            <i class="fas fa-list-ol"></i> Classement
+                        </button>
+                        <button onclick="previewFixtures()" style="padding:8px 16px;background:#333;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+                            <i class="fas fa-futbol"></i> Matchs & Calendrier
+                        </button>
+                        <button onclick="previewTopScorers()" style="padding:8px 16px;background:#333;color:#fff;border:none;border-radius:6px;cursor:pointer;">
+                            <i class="fas fa-shoe-prints"></i> Meilleurs Buteurs
+                        </button>
+                    </div>
+                    <div id="fbPreviewArea" style="background:#111;border-radius:10px;padding:20px;min-height:100px;max-height:500px;overflow-y:auto;">
+                        <p style="color:#666;text-align:center;">Cliquez sur un bouton ci-dessus pour voir les données en direct</p>
                     </div>
                 </div>
             </div>
