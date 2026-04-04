@@ -14,23 +14,11 @@ const playerRoutes = require('./routes/player');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/cssfaxien';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://cssadmin:2z59ukCleDqWtX4x@cluster0.btpit.mongodb.net/cssfaxien?retryWrites=true&w=majority';
 
-// Generate & persist JWT secret if not set
+// Generate JWT secret if not set (in-memory only for production)
 if (!process.env.JWT_SECRET) {
-    const fs = require('fs');
-    const envPath = path.join(__dirname, '..', '.env');
-    let secret;
-    try {
-        const envContent = fs.readFileSync(envPath, 'utf8');
-        const match = envContent.match(/JWT_SECRET=(.+)/);
-        if (match) secret = match[1].trim();
-    } catch(e) {}
-    if (!secret) {
-        secret = crypto.randomBytes(64).toString('hex');
-        try { fs.appendFileSync(envPath, `\nJWT_SECRET=${secret}\n`); } catch(e) {}
-    }
-    process.env.JWT_SECRET = secret;
+    process.env.JWT_SECRET = crypto.randomBytes(64).toString('hex');
 }
 
 // Security: Helmet HTTP headers

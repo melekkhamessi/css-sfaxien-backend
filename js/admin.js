@@ -5113,10 +5113,15 @@ function setSyncBtnLoading(btnId, loading) {
     }
 }
 
+function getSelectedSeason() {
+    const el = document.getElementById('fbSeason');
+    return el ? parseInt(el.value) : 2024;
+}
+
 async function syncAll() {
     setSyncBtnLoading('btnSyncAll', true);
     try {
-        const result = await apiPost('football-api/sync-all', {});
+        const result = await apiPost('football-api/sync-all', { season: getSelectedSeason() });
         showSyncResult(
             `Sync complet ! ${result.standings} équipes classement, ${result.matches} nouveaux matchs, ` +
             `${result.matchesUpdated} mis à jour, ${result.fixtures} nouveaux matchs au calendrier`
@@ -5131,7 +5136,7 @@ async function syncAll() {
 async function syncStandings() {
     setSyncBtnLoading('btnSyncStandings', true);
     try {
-        const result = await apiPost('football-api/sync-standings', {});
+        const result = await apiPost('football-api/sync-standings', { season: getSelectedSeason() });
         showSyncResult(`${result.imported} équipes importées dans le classement`);
         showToast('Classement synchronisé !');
     } catch(e) {
@@ -5143,7 +5148,7 @@ async function syncStandings() {
 async function syncMatches() {
     setSyncBtnLoading('btnSyncMatches', true);
     try {
-        const result = await apiPost('football-api/sync-matches', { last: 15 });
+        const result = await apiPost('football-api/sync-matches', { last: 15, season: getSelectedSeason() });
         showSyncResult(`${result.imported} nouveaux matchs importés, ${result.updated} mis à jour`);
         showToast('Matchs synchronisés !');
     } catch(e) {
@@ -5155,7 +5160,7 @@ async function syncMatches() {
 async function syncFixtures() {
     setSyncBtnLoading('btnSyncFixtures', true);
     try {
-        const result = await apiPost('football-api/sync-fixtures', { next: 10 });
+        const result = await apiPost('football-api/sync-fixtures', { next: 10, season: getSelectedSeason() });
         showSyncResult(`${result.imported} nouveaux matchs ajoutés au calendrier`);
         showToast('Calendrier synchronisé !');
     } catch(e) {
@@ -5168,7 +5173,7 @@ async function previewStandings() {
     const area = document.getElementById('fbPreviewArea');
     area.innerHTML = '<p style="color:#aaa;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement classement...</p>';
     try {
-        const standings = await apiGet('football-api/standings');
+        const standings = await apiGet('football-api/standings?season=' + getSelectedSeason());
         if (!standings.length) { area.innerHTML = '<p style="color:#e74c3c;">Aucun classement trouvé</p>'; return; }
         let html = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead><tr style="color:#aaa;border-bottom:1px solid #333;">
@@ -5213,7 +5218,7 @@ async function previewFixtures() {
     const area = document.getElementById('fbPreviewArea');
     area.innerHTML = '<p style="color:#aaa;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement matchs...</p>';
     try {
-        const fixtures = await apiGet('football-api/team-fixtures?last=10&next=10');
+        const fixtures = await apiGet('football-api/team-fixtures?last=10&next=10&season=' + getSelectedSeason());
         if (!fixtures.length) { area.innerHTML = '<p style="color:#e74c3c;">Aucun match trouvé</p>'; return; }
 
         // Sort by date
@@ -5251,7 +5256,7 @@ async function previewTopScorers() {
     const area = document.getElementById('fbPreviewArea');
     area.innerHTML = '<p style="color:#aaa;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement buteurs...</p>';
     try {
-        const scorers = await apiGet('football-api/top-scorers');
+        const scorers = await apiGet('football-api/top-scorers?season=' + getSelectedSeason());
         if (!scorers.length) { area.innerHTML = '<p style="color:#e74c3c;">Aucun buteur trouvé</p>'; return; }
 
         let html = `<table style="width:100%;border-collapse:collapse;font-size:13px;">

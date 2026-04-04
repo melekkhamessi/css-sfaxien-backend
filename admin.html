@@ -3243,6 +3243,20 @@
                             <input type="number" id="fbLeagueId" value="202" style="width:100%;padding:10px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box;">
                             <small style="color:#666;">202 = Ligue 1 Tunisie</small>
                         </div>
+                        <div>
+                            <label style="color:#aaa;font-size:13px;display:block;margin-bottom:5px;">Saison</label>
+                            <select id="fbSeason" style="width:100%;padding:10px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box;">
+                                <option value="2024">2024-2025</option>
+                                <option value="2023">2023-2024</option>
+                                <option value="2022">2022-2023</option>
+                                <option value="2025">2025-2026 (Payant)</option>
+                                <option value="2026">2026-2027 (Payant)</option>
+                            </select>
+                            <small style="color:#f39c12;">⚠ Plan gratuit : saisons 2022-2024 uniquement</small>
+                        </div>
+                    </div>
+                    <div style="background:#1a1000;border:1px solid #f39c12;border-radius:8px;padding:12px;margin-bottom:15px;">
+                        <p style="color:#f39c12;margin:0;font-size:13px;"><i class="fas fa-info-circle"></i> <strong>Plan Gratuit :</strong> Accès aux saisons 2022 à 2024 (100 req/jour). Pour les données de la saison en cours (2025-2026), un <a href="https://dashboard.api-football.com/register" target="_blank" rel="noopener noreferrer" style="color:#e74c3c;font-weight:bold;">abonnement Pro</a> est nécessaire (~20$/mois).</p>
                     </div>
                     <div style="display:flex;gap:10px;align-items:center;">
                         <button onclick="saveFootballApiConfig()" style="padding:10px 20px;background:#e74c3c;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">

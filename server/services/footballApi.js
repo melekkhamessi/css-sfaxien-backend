@@ -71,10 +71,10 @@ async function getLeagueId() {
 
 /**
  * Get current season year
+ * Free plan: 2022-2024 only. Paid plan: all seasons.
  */
 function getCurrentSeason() {
     const now = new Date();
-    // Tunisian league season spans Aug-May, so if we're past July use current year, else previous
     return now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
 }
 
