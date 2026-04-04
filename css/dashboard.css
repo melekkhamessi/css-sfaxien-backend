@@ -1,0 +1,1044 @@
+/* ══════════════════════════════════════════════════════════════
+   CS SFAXIEN — DASHBOARD & AUTH STYLES
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── AUTH MODAL ── */
+.auth-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+.auth-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+.auth-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+}
+.auth-modal-box {
+    position: relative;
+    background: white;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 0;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.auth-modal.active .auth-modal-box {
+    transform: translateY(0) scale(1);
+}
+.auth-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.05);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.3s;
+    font-size: 0.9rem;
+    color: #555;
+}
+.auth-modal-close:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+/* Auth Tabs */
+.auth-tabs {
+    display: flex;
+    border-bottom: 2px solid #f0f0f0;
+}
+.auth-tab {
+    flex: 1;
+    padding: 18px;
+    border: none;
+    background: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+.auth-tab.active {
+    color: #1a1a1a;
+}
+.auth-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 20%;
+    width: 60%;
+    height: 3px;
+    background: #1a1a1a;
+    border-radius: 3px;
+}
+
+/* Auth Forms */
+.auth-form {
+    display: none;
+    padding: 30px 32px 36px;
+}
+.auth-form.active {
+    display: block;
+    animation: authFadeIn 0.4s ease;
+}
+@keyframes authFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+.auth-logo {
+    width: 56px;
+    height: 56px;
+    background: #1a1a1a;
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+}
+.auth-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.auth-header p {
+    color: #888;
+    font-size: 0.88rem;
+}
+.auth-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.auth-field {
+    position: relative;
+    margin-bottom: 16px;
+}
+.auth-field i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 0.85rem;
+}
+.auth-field input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.92rem;
+    transition: border-color 0.3s;
+    background: #fafafa;
+    box-sizing: border-box;
+}
+.auth-field input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: white;
+}
+.auth-error {
+    color: #ef4444;
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+    min-height: 20px;
+}
+.auth-submit {
+    width: 100%;
+    padding: 14px;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+.auth-submit:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.auth-switch {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: #888;
+}
+.auth-switch a {
+    color: #1a1a1a;
+    font-weight: 700;
+    text-decoration: none;
+}
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* ── OAuth Social Buttons ── */
+.auth-social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 0;
+}
+.auth-social-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+.auth-social-btn:hover {
+    background: #f5f5f5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.auth-google-btn:hover { border-color: #4285F4; }
+.auth-google-btn svg { flex-shrink: 0; }
+.auth-facebook-btn:hover { border-color: #1877F2; }
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    gap: 12px;
+}
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+}
+.auth-divider span {
+    color: #999;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* ── HEADER USER BUTTON ── */
+.header-actions {
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+}
+.user-account-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.user-account-btn:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+.user-account-btn.logged-in {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+}
+.user-account-btn i {
+    font-size: 1.1rem;
+}
+.user-btn-name {
+    display: inline;
+}
+
+/* ── DASHBOARD WELCOME ── */
+.dash-section {
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+.dash-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 32px 36px;
+    background: #1a1a1a;
+    color: white;
+    border-radius: 24px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+.dash-welcome-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.dash-avatar {
+    width: 68px;
+    height: 68px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+    flex-shrink: 0;
+}
+.dash-avatar span {
+    font-size: 1.3rem;
+}
+.dash-welcome-info h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.dash-membership {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255,255,255,0.1);
+    margin-bottom: 4px;
+}
+.dash-membership.tier-standard { background: rgba(255,255,255,0.1); }
+.dash-membership.tier-silver { background: rgba(192,192,192,0.3); color: #e0e0e0; }
+.dash-membership.tier-gold { background: rgba(255,215,0,0.25); color: #ffd700; }
+.dash-membership.tier-platinum { background: rgba(100,200,255,0.2); color: #7dd3fc; }
+.dash-email {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+.dash-points {
+    text-align: center;
+}
+.dash-points-num {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+.dash-points-label {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ── STATS GRID ── */
+.dash-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+/* ===== Social Member Card ===== */
+.dash-member-card {
+    position: relative;
+    background: linear-gradient(135deg, #111 0%, #1a1a1a 50%, #222 100%);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+.dash-member-card-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 10% 50%, rgba(255,255,255,0.04) 0%, transparent 60%),
+        radial-gradient(circle at 90% 20%, rgba(255,255,255,0.03) 0%, transparent 50%);
+    pointer-events: none;
+}
+.dash-member-card-content {
+    position: relative;
+    z-index: 1;
+}
+.dash-member-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.dash-member-card-logo {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+.dash-member-card-body {}
+.dash-member-card-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+}
+.dash-member-card-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+}
+.dash-member-card-details > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.dash-member-card-details span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+}
+.dash-member-card-details strong {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .dash-member-card { padding: 20px; }
+    .dash-member-card-name { font-size: 1.2rem; }
+    .dash-member-card-details { grid-template-columns: 1fr 1fr; }
+}
+.dash-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dash-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+.dash-stat-icon {
+    width: 52px;
+    height: 52px;
+    background: #1a1a1a;
+    color: white;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.dash-stat-num {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #1a1a1a;
+}
+.dash-stat-label {
+    font-size: 0.78rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── TABS ── */
+.dash-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    background: #f5f5f5;
+    padding: 6px;
+    border-radius: 16px;
+    flex-wrap: wrap;
+}
+.dash-tab {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #888;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.dash-tab:hover { color: #444; }
+.dash-tab.active {
+    background: #1a1a1a;
+    color: white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.dash-tab-content {
+    display: none;
+    animation: dashTabFade 0.4s ease;
+}
+.dash-tab-content.active {
+    display: block;
+}
+@keyframes dashTabFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── ORDERS LIST ── */
+.dash-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+}
+.dash-empty i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+    display: block;
+}
+.dash-order-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+.dash-order-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+.order-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+}
+.order-ref {
+    font-family: 'Space Grotesk', monospace;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #1a1a1a;
+}
+.order-date {
+    font-size: 0.82rem;
+    color: #888;
+}
+.order-status {
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: color-mix(in srgb, var(--status-color, #888) 15%, transparent);
+    color: var(--status-color, #888);
+}
+.order-items {
+    padding: 16px 24px;
+}
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+.order-item:last-child { border-bottom: none; }
+.order-item > i {
+    width: 36px;
+    height: 36px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.order-item-info {
+    flex: 1;
+}
+.order-item-info strong {
+    display: block;
+    font-size: 0.88rem;
+    color: #1a1a1a;
+}
+.order-item-info small {
+    color: #999;
+    font-size: 0.78rem;
+}
+.order-item-qty {
+    color: #888;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+.order-item-price {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    min-width: 80px;
+    text-align: right;
+}
+.order-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    padding: 14px 24px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+}
+.order-discount {
+    color: #10b981;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+.order-total {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
+
+/* ── QUICK ACTIONS GRID ── */
+.dash-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+.dash-quick-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    padding: 28px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dash-quick-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+.dqc-icon {
+    width: 52px;
+    height: 52px;
+    background: #1a1a1a;
+    color: white;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+}
+.dash-quick-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.dash-quick-card p {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+/* Quick-action form elements */
+.dash-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+    transition: border-color 0.3s;
+    background: #fafafa;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.dash-input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: white;
+}
+.dqc-qty {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+.qty-btn {
+    width: 38px;
+    height: 38px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    color: #555;
+}
+.qty-btn:hover {
+    border-color: #1a1a1a;
+    background: #1a1a1a;
+    color: white;
+}
+.qty-val {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    min-width: 30px;
+    text-align: center;
+}
+.dqc-promo {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.dqc-promo .dash-input {
+    margin-bottom: 0;
+    flex: 1;
+}
+.btn-apply-promo {
+    padding: 12px 18px;
+    background: #f5f5f5;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s;
+}
+.btn-apply-promo:hover {
+    background: #1a1a1a;
+    color: white;
+    border-color: #1a1a1a;
+}
+.dqc-total {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    padding: 10px 0;
+    border-top: 1px solid #f0f0f0;
+}
+.dqc-total strong {
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+.dqc-discount-info {
+    color: #10b981;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-left: 8px;
+}
+.dash-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+.dash-btn-primary {
+    background: #1a1a1a;
+    color: white;
+}
+.dash-btn-primary:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.dash-btn-logout {
+    background: transparent;
+    color: #ef4444;
+    border: 2px solid #ef4444;
+    margin-top: 20px;
+}
+.dash-btn-logout:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* ── DONATION PRESETS ── */
+.don-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.don-preset {
+    padding: 10px 18px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    background: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.don-preset:hover, .don-preset.active {
+    background: #1a1a1a;
+    color: white;
+    border-color: #1a1a1a;
+}
+
+/* ── PROFILE GRID ── */
+.dash-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+}
+.dash-profile-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    padding: 28px;
+}
+.dash-profile-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dash-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.dash-form-group {
+    margin-bottom: 16px;
+}
+.dash-form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── MEMBERSHIP TIERS ── */
+.membership-tiers {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.tier-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #f9f9f9;
+    transition: all 0.3s;
+    opacity: 0.5;
+}
+.tier-item.current {
+    opacity: 1;
+    background: #1a1a1a;
+    color: white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.tier-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.05);
+    font-size: 1rem;
+}
+.tier-item.current .tier-icon {
+    background: rgba(255,255,255,0.15);
+}
+.tier-info strong {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+}
+.tier-info span {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+.membership-progress {
+    margin-bottom: 12px;
+}
+.membership-bar {
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.membership-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1a1a1a, #555);
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0;
+}
+.membership-next {
+    font-size: 0.82rem;
+    color: #888;
+    text-align: center;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .auth-modal-box {
+        width: 95%;
+        max-width: 100%;
+        border-radius: 18px;
+        margin: 10px;
+    }
+    .auth-row { grid-template-columns: 1fr; }
+    .auth-form { padding: 24px 20px; }
+    .dash-welcome {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+    .dash-welcome-left {
+        flex-direction: column;
+    }
+    .dash-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dash-quick-grid {
+        grid-template-columns: 1fr;
+    }
+    .dash-profile-grid {
+        grid-template-columns: 1fr;
+    }
+    .dash-tabs {
+        flex-direction: column;
+    }
+    .dash-form-row {
+        grid-template-columns: 1fr;
+    }
+    .user-btn-name {
+        display: none;
+    }
+    .header-actions {
+        margin-left: auto;
+        margin-right: 8px;
+    }
+    .user-account-btn {
+        padding: 7px 14px;
+        font-size: 0.75rem;
+        background: rgba(231,76,60,0.2);
+        border-color: rgba(231,76,60,0.4);
+    }
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dash-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .dash-welcome-info h2 {
+        font-size: 1.2rem;
+    }
+    .dash-points-num {
+        font-size: 2rem;
+    }
+    .don-presets {
+        gap: 6px;
+    }
+    .don-preset {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+    }
+}

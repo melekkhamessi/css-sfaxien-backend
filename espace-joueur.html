@@ -1,0 +1,778 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CS Sfaxien - Espace Joueur & Entraîneur">
+    <meta name="theme-color" content="#e74c3c">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="uploads/images/css-logo.png" type="image/png">
+    <title>Espace Joueur — CS Sfaxien</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Open+Sans:wght@400;600&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { background:#f5f6f8; cursor:auto; }
+
+        /* Login Screen */
+        .player-login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); position:relative; overflow:hidden; }
+        .player-login-screen::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle at 30% 50%, rgba(231,76,60,0.08) 0%, transparent 50%); }
+        .login-card { background:#fff; border-radius:20px; padding:40px; width:400px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.3); position:relative; z-index:1; text-align:center; }
+        .login-logo { width:80px; height:80px; margin:0 auto 20px; }
+        .login-logo img { width:100%; height:100%; object-fit:contain; }
+        .login-card h2 { font-size:1.3rem; color:#2c3e50; margin-bottom:6px; }
+        .login-card p { color:#999; font-size:0.85rem; margin-bottom:25px; }
+        .login-card .form-group { text-align:left; margin-bottom:16px; }
+        .login-card .form-group label { font-size:0.8rem; font-weight:600; color:#555; display:block; margin-bottom:6px; }
+        .login-card .form-group input { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:10px; font-size:0.9rem; transition:border .2s; box-sizing:border-box; }
+        .login-card .form-group input:focus { border-color:#e74c3c; outline:none; box-shadow:0 0 0 3px rgba(231,76,60,0.08); }
+        .login-btn { width:100%; padding:14px; background:linear-gradient(135deg,#e74c3c,#c0392b); border:none; border-radius:12px; color:#fff; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all .3s; margin-top:8px; }
+        .login-btn:hover { box-shadow:0 6px 20px rgba(231,76,60,0.4); transform:translateY(-1px); }
+        .login-error { color:#e74c3c; font-size:0.8rem; margin-top:10px; display:none; }
+        .login-footer { margin-top:20px; font-size:0.75rem; color:#bbb; }
+
+        /* Dashboard Layout — Sidebar like Admin */
+        .pdb { display:flex; min-height:calc(100vh - 50px); margin:0; padding:0; }
+        .pdb-sidebar {
+            width:250px;
+            background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%);
+            color:#fff;
+            position:fixed;
+            top:50px;
+            bottom:0;
+            left:0;
+            overflow-y:auto;
+            z-index:100;
+            padding:0;
+            flex-shrink:0;
+        }
+        .pdb-sidebar-profile { padding:18px 16px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+        .pdb-sidebar-avatar { width:42px; height:42px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); object-fit:cover; background:#2c3e50; flex-shrink:0; }
+        .pdb-sidebar-name { font-size:0.85rem; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .pdb-sidebar-role { font-size:0.62rem; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px; }
+        .pdb-sidebar-section { padding:14px 18px 6px; font-size:0.58rem; font-weight:700; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:2px; }
+        .pdb-nav-link {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:11px 20px;
+            color:rgba(255,255,255,0.6);
+            font-family:'Montserrat',sans-serif;
+            font-size:0.83rem;
+            font-weight:600;
+            cursor:pointer;
+            border:none;
+            background:none;
+            width:100%;
+            text-align:left;
+            transition:all .2s;
+            border-left:3px solid transparent;
+        }
+        .pdb-nav-link:hover { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.9); }
+        .pdb-nav-link.active { background:rgba(231,76,60,0.12); color:#fff; border-left-color:#e74c3c; }
+        .pdb-nav-link i { width:18px; text-align:center; font-size:0.85rem; }
+        .pdb-nav-link .nav-badge { margin-left:auto; background:#e74c3c; color:#fff; font-size:0.55rem; font-weight:800; padding:2px 7px; border-radius:10px; min-width:14px; text-align:center; }
+        .pdb-sidebar-logout { padding:12px 20px; border-top:1px solid rgba(255,255,255,0.06); margin-top:auto; }
+        .pdb-sidebar-logout button { display:flex; align-items:center; gap:10px; width:100%; padding:10px 14px; background:rgba(231,76,60,0.1); border:none; border-radius:8px; color:rgba(255,255,255,0.5); font-size:0.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+        .pdb-sidebar-logout button:hover { background:rgba(231,76,60,0.25); color:#fff; }
+        .pdb-main-content {
+            flex:1;
+            margin-left:250px;
+            padding:20px 28px 40px;
+            min-width:0;
+        }
+        .pdb-mobile-toggle { display:none; }
+
+        /* Stats Cards */
+        .pdb-stats { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px; }
+        .pdb-stat { background:#fff; border-radius:12px; padding:14px 12px; text-align:center; border:1px solid #e8eaed; position:relative; overflow:hidden; }
+        .pdb-stat::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; }
+        .pdb-stat.matchs::after { background:#3498db; }
+        .pdb-stat.goals::after { background:#2ecc71; }
+        .pdb-stat.assists::after { background:#9b59b6; }
+        .pdb-stat.yellows::after { background:#f39c12; }
+        .pdb-stat.reds::after { background:#e74c3c; }
+        .pdb-stat-icon { font-size:1.2rem; opacity:0.3; margin-bottom:4px; }
+        .pdb-stat-val { font-size:1.5rem; font-weight:900; color:#2c3e50; }
+        .pdb-stat-label { font-size:0.65rem; color:#999; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+        /* Page title for main content area */
+        .pdb-page-title { font-size:1.3rem; font-weight:800; color:#2c3e50; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+        .pdb-page-title i { color:#e74c3c; }
+
+        /* Tab Content — no more tabs, always visible */
+        .pdb-panel { display:none; }
+        .pdb-panel.active { display:block; }
+
+        /* Recent Performance Table */
+        .pdb-card { background:#fff; border-radius:14px; border:1px solid #e8eaed; overflow:hidden; margin-bottom:20px; }
+        .pdb-card-header { padding:16px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+        .pdb-card-header h3 { margin:0; font-size:0.95rem; color:#2c3e50; font-weight:700; display:flex; align-items:center; gap:8px; }
+        .pdb-card-body { padding:20px; }
+        .perf-table { width:100%; border-collapse:collapse; }
+        .perf-table thead th { padding:10px; font-size:0.7rem; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid #eee; text-align:center; }
+        .perf-table thead th:first-child { text-align:left; }
+        .perf-table tbody tr { border-bottom:1px solid #f5f5f5; transition:background .2s; }
+        .perf-table tbody tr:hover { background:#f8f9fb; }
+        .perf-table tbody td { padding:12px 10px; text-align:center; font-size:0.85rem; color:#555; }
+        .perf-table tbody td:first-child { text-align:left; font-weight:600; color:#2c3e50; }
+        .perf-goal { color:#27ae60; font-weight:700; }
+        .perf-assist { color:#9b59b6; font-weight:700; }
+
+        /* Upcoming Fixture Cards */
+        .fixture-list { display:flex; flex-direction:column; gap:10px; }
+        .fix-card { display:flex; align-items:center; gap:15px; padding:14px 18px; background:#f7f8fa; border-radius:12px; border:1px solid #e8eaed; }
+        .fix-date { text-align:center; min-width:50px; }
+        .fix-day { font-size:1.4rem; font-weight:900; color:#2c3e50; }
+        .fix-month { font-size:0.65rem; text-transform:uppercase; color:#999; letter-spacing:1px; }
+        .fix-info { flex:1; }
+        .fix-teams { font-weight:700; font-size:0.9rem; color:#2c3e50; }
+        .fix-meta { font-size:0.75rem; color:#888; margin-top:2px; }
+
+        /* Teammates grid */
+        .teammates-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+        .teammate-card { background:#f7f8fa; border:1px solid #e8eaed; border-radius:12px; padding:16px; text-align:center; transition:all .2s; }
+        .teammate-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.06); }
+        .teammate-avatar { width:50px; height:50px; border-radius:50%; object-fit:cover; margin:0 auto 8px; display:block; border:2px solid #e8eaed; background:#f0f2f5; }
+        .teammate-name { font-weight:700; font-size:0.85rem; color:#2c3e50; }
+        .teammate-pos { font-size:0.7rem; color:#999; margin-top:2px; }
+        .teammate-number { font-size:0.75rem; font-weight:800; color:#e74c3c; }
+        .teammate-rating { font-size:0.7rem; margin-top:4px; }
+
+        /* Standings mini */
+        .standings-mini { width:100%; border-collapse:collapse; }
+        .standings-mini th { padding:8px; font-size:0.7rem; font-weight:700; color:#999; text-transform:uppercase; border-bottom:2px solid #eee; text-align:center; }
+        .standings-mini th:nth-child(2) { text-align:left; }
+        .standings-mini td { padding:10px 8px; text-align:center; font-size:0.8rem; color:#555; border-bottom:1px solid #f5f5f5; }
+        .standings-mini td:nth-child(2) { text-align:left; font-weight:600; color:#2c3e50; }
+        .standings-mini tr.our-team { background:#fff8f5; font-weight:700; }
+
+        /* Profile Section */
+        .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .profile-field { margin-bottom:14px; }
+        .profile-field label { font-size:0.75rem; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px; }
+        .profile-field .pf-value { font-size:1rem; font-weight:600; color:#2c3e50; padding:10px 14px; background:#f7f8fa; border-radius:8px; border:1px solid #e8eaed; }
+
+        /* Coach view extras */
+        .coach-section { background:#fff; border-radius:14px; border:1px solid #e8eaed; padding:20px; margin-bottom:20px; }
+        .coach-section h3 { margin:0 0 15px; font-size:0.95rem; color:#2c3e50; display:flex; align-items:center; gap:8px; }
+        .squad-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+        .squad-cat { background:#f7f8fa; border:1px solid #e8eaed; border-radius:10px; padding:14px; text-align:center; }
+        .squad-cat-count { font-size:1.5rem; font-weight:900; color:#2c3e50; }
+        .squad-cat-label { font-size:0.7rem; color:#999; text-transform:uppercase; }
+
+        /* ===== MESSAGING (Messenger-style) ===== */
+        .chat-container { display:flex; gap:0; height:580px; background:#fff; border-radius:14px; border:1px solid #e8eaed; overflow:hidden; }
+        .chat-sidebar { width:240px; border-right:1px solid #e8eaed; background:#fff; flex-shrink:0; display:flex; flex-direction:column; }
+        .chat-sidebar-header { padding:14px 16px; font-size:0.9rem; font-weight:800; color:#2c3e50; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; }
+        .chat-sidebar-section { padding:10px 14px 6px; font-size:0.65rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:1.5px; }
+        .chat-sidebar-scroll { flex:1; overflow-y:auto; }
+        /* Channels */
+        .chat-channel { padding:10px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; font-size:0.85rem; color:#555; transition:all .15s; border-left:3px solid transparent; }
+        .chat-channel:hover { background:#f5f6f8; }
+        .chat-channel.active { background:#fef2f2; color:#e74c3c; font-weight:700; border-left-color:#e74c3c; }
+        .chat-channel i { width:18px; text-align:center; color:#aaa; }
+        .chat-channel.active i { color:#e74c3c; }
+        .chat-channel .ch-badge { margin-left:auto; background:#e74c3c; color:#fff; font-size:0.6rem; font-weight:800; padding:2px 6px; border-radius:10px; min-width:16px; text-align:center; }
+        /* Online users list */
+        .chat-user-item { display:flex; align-items:center; gap:10px; padding:7px 16px; font-size:0.8rem; color:#555; }
+        .chat-user-avatar { width:30px; height:30px; border-radius:50%; object-fit:cover; background:#f0f2f5; border:1.5px solid #e8eaed; position:relative; flex-shrink:0; }
+        .chat-user-status { position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; border:2px solid #fff; }
+        .chat-user-status.online { background:#2ecc71; }
+        .chat-user-status.offline { background:#bdc3c7; }
+        .chat-user-name { font-size:0.78rem; font-weight:600; color:#2c3e50; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .chat-user-seen { font-size:0.6rem; color:#aaa; }
+        /* Main area */
+        .chat-main { flex:1; display:flex; flex-direction:column; min-width:0; }
+        .chat-header { padding:12px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; }
+        .chat-header h3 { margin:0; font-size:0.95rem; font-weight:700; color:#2c3e50; }
+        .chat-messages { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:8px; }
+        .chat-msg { display:flex; gap:10px; align-items:flex-end; max-width:75%; padding:2px 0; }
+        .chat-msg.mine { align-self:flex-end; flex-direction:row-reverse; }
+        .chat-msg-avatar { width:30px; height:30px; border-radius:50%; object-fit:cover; background:#f0f2f5; flex-shrink:0; }
+        .chat-msg-body { background:#f0f2f5; border-radius:18px; padding:10px 14px; position:relative; }
+        .chat-msg.mine .chat-msg-body { background:#e74c3c; color:#fff; border-radius:18px; }
+        .chat-msg-sender { font-size:0.65rem; font-weight:700; color:#888; margin-bottom:2px; display:flex; align-items:center; gap:6px; }
+        .chat-msg.mine .chat-msg-sender { display:none; }
+        .chat-msg-text { font-size:0.85rem; line-height:1.45; word-break:break-word; }
+        .chat-msg-time { font-size:0.58rem; color:#bbb; margin-top:3px; }
+        .chat-msg.mine .chat-msg-time { color:rgba(255,255,255,.5); text-align:right; }
+        .chat-msg-actions { opacity:0; transition:opacity .2s; display:flex; gap:4px; align-items:center; }
+        .chat-msg:hover .chat-msg-actions { opacity:1; }
+        .chat-msg-actions button { background:none; border:none; color:#ccc; cursor:pointer; font-size:0.7rem; padding:2px; }
+        .chat-msg-actions button:hover { color:#e74c3c; }
+        .chat-msg.pinned .chat-msg-body { border-left:3px solid #f39c12; }
+        /* Attachments in messages */
+        .chat-msg-attachments { margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; }
+        .chat-msg-img { max-width:240px; max-height:200px; border-radius:12px; cursor:pointer; object-fit:cover; }
+        .chat-msg-video { max-width:280px; border-radius:12px; }
+        .chat-msg-file { display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(0,0,0,.06); border-radius:10px; font-size:0.78rem; color:#555; text-decoration:none; }
+        .chat-msg.mine .chat-msg-file { background:rgba(255,255,255,.2); color:#fff; }
+        .chat-msg-file i { font-size:1.1rem; }
+        .chat-msg-file-info { display:flex; flex-direction:column; }
+        .chat-msg-file-name { font-weight:600; }
+        .chat-msg-file-size { font-size:0.65rem; opacity:.7; }
+        /* Input area */
+        .chat-input-area { padding:10px 16px; border-top:1px solid #eee; display:flex; gap:8px; align-items:center; }
+        .chat-input-area input[type="text"] { flex:1; padding:10px 16px; border:1px solid #e0e0e0; border-radius:20px; font-size:0.85rem; outline:none; }
+        .chat-input-area input[type="text"]:focus { border-color:#e74c3c; }
+        .chat-attach-btn { width:36px; height:36px; border-radius:50%; background:#f0f0f0; border:none; color:#888; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; transition:all .15s; }
+        .chat-attach-btn:hover { background:#e0e0e0; color:#555; }
+        .chat-send-btn { width:38px; height:38px; border-radius:50%; background:#e74c3c; border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; }
+        .chat-send-btn:hover { background:#c0392b; }
+        .chat-upload-preview { display:flex; gap:8px; padding:6px 16px; flex-wrap:wrap; align-items:center; border-top:1px solid #eee; background:#fafafa; }
+        .chat-upload-thumb { position:relative; }
+        .chat-upload-thumb img, .chat-upload-thumb video { width:60px; height:60px; border-radius:8px; object-fit:cover; }
+        .chat-upload-thumb .remove-attach { position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:#e74c3c; color:#fff; border:none; font-size:0.6rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        .chat-upload-file-item { display:flex; align-items:center; gap:6px; padding:4px 10px; background:#f0f0f0; border-radius:8px; font-size:0.75rem; position:relative; }
+        .chat-empty { text-align:center; color:#ccc; padding:60px 20px; font-size:0.85rem; }
+        /* DM/Group sidebar items */
+        .chat-dm-item { display:flex; align-items:center; gap:10px; padding:8px 16px; cursor:pointer; font-size:0.82rem; color:#555; transition:all .15s; border-left:3px solid transparent; }
+        .chat-dm-item:hover { background:#f5f6f8; }
+        .chat-dm-item.active { background:#fef2f2; color:#e74c3c; font-weight:700; border-left-color:#e74c3c; }
+        .chat-dm-avatar { width:28px; height:28px; border-radius:50%; object-fit:cover; background:#f0f2f5; border:1.5px solid #e8eaed; flex-shrink:0; }
+        .chat-dm-name { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+        .chat-group-icon { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.65rem; flex-shrink:0; }
+        .chat-new-btn { display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:0.72rem; color:#e74c3c; cursor:pointer; font-weight:700; border:none; background:none; width:100%; text-align:left; transition:background .15s; }
+        .chat-new-btn:hover { background:#fef2f2; }
+        .chat-new-btn i { font-size:0.7rem; }
+        /* Modal for creating group/DM */
+        .chat-modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:2000; display:flex; align-items:center; justify-content:center; }
+        .chat-modal { background:#fff; border-radius:16px; width:420px; max-width:90vw; max-height:80vh; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+        .chat-modal-header { padding:16px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; }
+        .chat-modal-header h3 { margin:0; font-size:0.95rem; font-weight:800; color:#2c3e50; }
+        .chat-modal-close { background:none; border:none; font-size:1.2rem; color:#999; cursor:pointer; padding:4px; }
+        .chat-modal-close:hover { color:#e74c3c; }
+        .chat-modal-body { padding:16px 20px; overflow-y:auto; max-height:50vh; }
+        .chat-modal-footer { padding:12px 20px; border-top:1px solid #eee; display:flex; justify-content:flex-end; gap:8px; }
+        .chat-modal-footer button { padding:8px 18px; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer; border:none; }
+        .chat-modal-footer .btn-cancel { background:#f0f0f0; color:#555; }
+        .chat-modal-footer .btn-confirm { background:#e74c3c; color:#fff; }
+        .chat-modal-footer .btn-confirm:hover { background:#c0392b; }
+        .chat-member-check { display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; }
+        .chat-member-check input[type="checkbox"] { accent-color:#e74c3c; width:16px; height:16px; }
+        .chat-member-check img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+        .chat-member-check-name { font-size:0.82rem; font-weight:600; color:#2c3e50; }
+        .chat-member-check-cat { font-size:0.65rem; color:#999; text-transform:capitalize; }
+        .chat-search-input { width:100%; padding:8px 14px; border:1px solid #e0e0e0; border-radius:10px; font-size:0.82rem; outline:none; margin-bottom:10px; }
+        .chat-search-input:focus { border-color:#e74c3c; }
+
+        /* ===== FORMATIONS ===== */
+        .pitch { position:relative; width:100%; aspect-ratio:3/4; max-height:480px; background:linear-gradient(180deg,#2d8a4e 0%,#27753f 50%,#2d8a4e 100%); border-radius:14px; overflow:hidden; border:3px solid #235a34; }
+        .pitch::before { content:''; position:absolute; top:50%; left:10%; right:10%; height:1px; background:rgba(255,255,255,.3); }
+        .pitch::after { content:''; position:absolute; top:calc(50% - 60px); left:50%; width:120px; height:120px; border:1px solid rgba(255,255,255,.3); border-radius:50%; transform:translateX(-50%); }
+        .pitch-center { position:absolute; top:50%; left:50%; width:8px; height:8px; background:rgba(255,255,255,.4); border-radius:50%; transform:translate(-50%,-50%); }
+        .pitch-box-top { position:absolute; top:0; left:20%; width:60%; height:17%; border:1px solid rgba(255,255,255,.3); border-top:none; }
+        .pitch-box-bot { position:absolute; bottom:0; left:20%; width:60%; height:17%; border:1px solid rgba(255,255,255,.3); border-bottom:none; }
+        .pitch-6-top { position:absolute; top:0; left:32%; width:36%; height:7%; border:1px solid rgba(255,255,255,.2); border-top:none; }
+        .pitch-6-bot { position:absolute; bottom:0; left:32%; width:36%; height:7%; border:1px solid rgba(255,255,255,.2); border-bottom:none; }
+        .pitch-player { position:absolute; transform:translate(-50%,-50%); text-align:center; cursor:default; z-index:2; transition:left 0.3s, top 0.3s; }
+        .pitch-player-circle { width:48px; height:48px; border-radius:50%; background:rgba(0,0,0,.35); border:2.5px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.85rem; color:#fff; margin:0 auto; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.3); }
+        .pitch-player-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .pitch-player-circle .pitch-no-photo { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:900; font-size:0.9rem; }
+        .pitch-player-name { font-size:0.6rem; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.7); margin-top:3px; white-space:nowrap; font-weight:700; max-width:70px; overflow:hidden; text-overflow:ellipsis; }
+        .pitch-player-role { font-size:0.5rem; color:rgba(255,255,255,.7); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+        /* Draggable players in editor */
+        .pitch-player.draggable { cursor:grab; transition:none; }
+        .pitch-player.draggable:hover .pitch-player-circle { border-color:#f1c40f; box-shadow:0 0 12px rgba(241,196,15,.5); }
+        .pitch-player.dragging { cursor:grabbing; z-index:10; transition:none; }
+        .pitch-player.dragging .pitch-player-circle { border-color:#e74c3c; box-shadow:0 0 16px rgba(231,76,60,.6); transform:scale(1.15); }
+        /* Empty slot on editor pitch */
+        .pitch-slot { position:absolute; transform:translate(-50%,-50%); text-align:center; z-index:1; }
+        .pitch-slot-circle { width:48px; height:48px; border-radius:50%; border:2px dashed rgba(255,255,255,.4); display:flex; align-items:center; justify-content:center; margin:0 auto; cursor:pointer; transition:all .2s; background:rgba(255,255,255,.08); }
+        .pitch-slot-circle:hover { border-color:#f1c40f; background:rgba(241,196,15,.15); }
+        .pitch-slot-role { font-size:0.55rem; color:rgba(255,255,255,.5); text-transform:uppercase; font-weight:700; margin-top:2px; }
+        /* Formation type buttons */
+        .formation-types { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+        .formation-type-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #ddd; background:#fff; font-size:0.75rem; font-weight:600; cursor:pointer; transition:all .2s; color:#666; }
+        .formation-type-btn:hover { border-color:#9b59b6; color:#9b59b6; }
+        .formation-type-btn.active { background:#9b59b6; color:#fff; border-color:#9b59b6; }
+        /* Player bench */
+        .editor-bench { background:#f7f8fa; border-radius:12px; border:1px solid #e8eaed; overflow-y:auto; max-height:100%; }
+        .bench-player { display:flex; align-items:center; gap:8px; padding:8px 12px; cursor:grab; transition:background .15s; border-bottom:1px solid #eee; }
+        .bench-player:hover { background:#eef0f4; }
+        .bench-player.used { opacity:0.35; pointer-events:none; }
+        .bench-player-photo { width:32px; height:32px; border-radius:50%; object-fit:cover; border:1.5px solid #ddd; background:#e0e0e0; }
+        .bench-player-info { flex:1; min-width:0; }
+        .bench-player-name { font-size:0.78rem; font-weight:600; color:#2c3e50; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .bench-player-num { font-size:0.7rem; color:#999; }
+        /* Editor layout */
+        .form-editor-pitch-layout { display:flex; gap:16px; margin:16px 0; }
+        .form-editor-pitch-left { flex:1; min-width:0; }
+        .form-editor-pitch-right { width:220px; flex-shrink:0; }
+        .formation-card { background:#fff; border-radius:14px; border:1px solid #e8eaed; overflow:hidden; margin-bottom:16px; transition:all .2s; }
+        .formation-card:hover { box-shadow:0 4px 12px rgba(0,0,0,.06); }
+        .formation-card-header { padding:16px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; }
+        .formation-card-header h4 { margin:0; font-size:0.95rem; color:#2c3e50; }
+        .formation-badge { padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+        .formation-badge.published { background:#e8f5e9; color:#27ae60; }
+        .formation-badge.draft { background:#fff8e1; color:#f39c12; }
+        .formation-subs { padding:12px 20px; background:#f8f9fb; font-size:0.8rem; color:#666; }
+        .formation-notes { padding:12px 20px; font-size:0.8rem; color:#888; font-style:italic; border-top:1px solid #eee; }
+        .formation-meta { font-size:0.75rem; color:#999; display:flex; gap:12px; margin-top:4px; }
+
+        /* Formation editor (coach) */
+        .form-editor-modal { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:1000; }
+        .form-editor-modal.active { display:flex; }
+        .form-editor { background:#fff; border-radius:16px; width:950px; max-width:95vw; max-height:90vh; overflow-y:auto; }
+        .form-editor-header { padding:20px 24px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+        .form-editor-header h3 { margin:0; font-size:1.1rem; }
+        .form-editor-body { padding:24px; }
+
+        /* ===== TRAINING SECTION ===== */
+        .training-calendar { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin-bottom:20px; }
+        .training-day { background:#f7f8fa; border-radius:10px; padding:8px; min-height:80px; border:1px solid #e8eaed; position:relative; }
+        .training-day.today { border-color:#e74c3c; background:#fff5f5; }
+        .training-day-label { font-size:0.65rem; font-weight:700; color:#888; text-transform:uppercase; margin-bottom:4px; }
+        .training-day-num { font-size:0.85rem; font-weight:800; color:#2c3e50; margin-bottom:6px; }
+        .training-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin:1px; }
+        .training-dot.terrain { background:#27ae60; }
+        .training-dot.salle { background:#e74c3c; }
+        .training-dot.tactique { background:#3498db; }
+        .training-dot.recuperation { background:#f39c12; }
+        .training-session { background:#fff; border-radius:12px; border:1px solid #e8eaed; margin-bottom:12px; overflow:hidden; transition:all .2s; }
+        .training-session:hover { box-shadow:0 4px 12px rgba(0,0,0,.06); }
+        .training-session-header { padding:14px 18px; display:flex; justify-content:space-between; align-items:center; }
+        .training-type-badge { padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+        .training-type-badge.terrain { background:#e8f5e9; color:#27ae60; }
+        .training-type-badge.salle { background:#fdecea; color:#e74c3c; }
+        .training-type-badge.tactique { background:#e3f2fd; color:#3498db; }
+        .training-type-badge.recuperation { background:#fff8e1; color:#f39c12; }
+        .training-intensity { font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:12px; }
+        .training-intensity.légère { background:#e8f5e9; color:#27ae60; }
+        .training-intensity.modérée { background:#fff8e1; color:#f39c12; }
+        .training-intensity.intense { background:#fdecea; color:#e74c3c; }
+        .training-intensity.double { background:#f3e5f5; color:#9b59b6; }
+        .training-exercises { padding:12px 18px; border-top:1px solid #eee; }
+        .training-exercise { display:flex; align-items:center; gap:8px; padding:6px 0; font-size:0.8rem; color:#555; border-bottom:1px solid #f5f5f5; }
+        .training-exercise:last-child { border-bottom:none; }
+        .exercise-cat { font-size:0.65rem; padding:2px 8px; border-radius:10px; background:#f0f0f0; color:#888; font-weight:600; }
+
+        /* ===== AI COACH SECTION ===== */
+        .ai-coach-header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); border-radius:16px; padding:24px; color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:20px; }
+        .ai-coach-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#e74c3c,#f39c12); display:flex; align-items:center; justify-content:center; font-size:1.8rem; flex-shrink:0; }
+        .ai-program-card { background:#fff; border-radius:14px; border:1px solid #e8eaed; margin-bottom:16px; overflow:hidden; }
+        .ai-program-header { padding:16px 20px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:10px; }
+        .ai-program-header h4 { margin:0; font-size:0.95rem; color:#2c3e50; }
+        .ai-program-body { padding:16px 20px; }
+        .ai-exercise-block { background:#f7f8fa; border-radius:10px; padding:14px; margin-bottom:10px; border-left:4px solid #9b59b6; }
+        .ai-exercise-block h5 { margin:0 0 8px; font-size:0.85rem; color:#2c3e50; }
+        .ai-exercise-list { list-style:none; padding:0; margin:0; }
+        .ai-exercise-list li { padding:4px 0; font-size:0.8rem; color:#555; display:flex; align-items:center; gap:6px; }
+        .ai-exercise-list li::before { content:'\\f111'; font-family:'Font Awesome 5 Free'; font-weight:900; font-size:0.35rem; color:#9b59b6; }
+        .ai-exercise-meta { display:flex; gap:12px; margin-top:6px; font-size:0.7rem; color:#999; }
+        .ai-note { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; border-radius:10px; margin-bottom:8px; font-size:0.82rem; }
+        .ai-note.good { background:#e8f5e9; color:#2e7d32; }
+        .ai-note.medium { background:#fff8e1; color:#f57f17; }
+        .ai-note.high { background:#fdecea; color:#c62828; }
+        .ai-week-plan { width:100%; border-collapse:collapse; }
+        .ai-week-plan th { font-size:0.7rem; text-transform:uppercase; color:#888; padding:8px 12px; text-align:left; border-bottom:2px solid #eee; }
+        .ai-week-plan td { padding:10px 12px; font-size:0.8rem; border-bottom:1px solid #f0f0f0; }
+        .ai-week-plan tr:hover td { background:#f7f8fa; }
+        .ai-nutrition-tip { display:flex; align-items:center; gap:8px; padding:10px 0; font-size:0.82rem; color:#555; border-bottom:1px solid #f0f0f0; }
+        .ai-nutrition-tip:last-child { border-bottom:none; }
+
+        /* ===== AI CHATBOT ===== */
+        .ai-coach-layout { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .ai-coach-layout .ai-coach-header { grid-column:1/-1; }
+        .ai-coach-recs { display:flex; flex-direction:column; gap:0; }
+        .ai-chatbot { background:#fff; border-radius:14px; border:1px solid #e8eaed; display:flex; flex-direction:column; height:580px; overflow:hidden; }
+        .ai-chatbot-header { padding:14px 18px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,#1a1a2e,#0f3460); color:#fff; border-radius:14px 14px 0 0; }
+        .ai-chatbot-header i { font-size:1.2rem; }
+        .ai-chatbot-header span { font-weight:700; font-size:0.9rem; }
+        .ai-chatbot-header .bot-status { font-size:0.7rem; opacity:0.7; font-weight:400; margin-left:auto; }
+        .ai-chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background:#f7f8fa; }
+        .ai-chat-msg { max-width:85%; padding:10px 14px; border-radius:14px; font-size:0.82rem; line-height:1.5; white-space:pre-wrap; word-wrap:break-word; animation:chatFadeIn 0.3s ease; }
+        .ai-chat-msg.bot { align-self:flex-start; background:#fff; border:1px solid #e8eaed; color:#333; border-bottom-left-radius:4px; }
+        .ai-chat-msg.user { align-self:flex-end; background:linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; border-bottom-right-radius:4px; }
+        .ai-chat-msg .msg-time { display:block; font-size:0.65rem; opacity:0.5; margin-top:4px; text-align:right; }
+        .ai-chat-typing { align-self:flex-start; display:flex; gap:4px; padding:10px 14px; background:#fff; border:1px solid #e8eaed; border-radius:14px; }
+        .ai-chat-typing span { width:6px; height:6px; border-radius:50%; background:#999; animation:typingDot 1.2s infinite; }
+        .ai-chat-typing span:nth-child(2) { animation-delay:0.2s; }
+        .ai-chat-typing span:nth-child(3) { animation-delay:0.4s; }
+        @keyframes typingDot { 0%,60%,100%{opacity:0.3;transform:translateY(0)} 30%{opacity:1;transform:translateY(-4px)} }
+        @keyframes chatFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .ai-chat-input-area { display:flex; gap:8px; padding:12px; border-top:1px solid #eee; background:#fff; }
+        .ai-chat-input-area input { flex:1; border:1px solid #ddd; border-radius:20px; padding:8px 16px; font-size:0.82rem; outline:none; transition:border-color 0.2s; }
+        .ai-chat-input-area input:focus { border-color:#e74c3c; }
+        .ai-chat-input-area button { width:36px; height:36px; border-radius:50%; border:none; background:linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform 0.2s; }
+        .ai-chat-input-area button:hover { transform:scale(1.1); }
+
+        /* ===== NOTIFICATIONS ===== */
+        .notif-bell { position:relative; cursor:pointer; }
+        .notif-badge { position:absolute; top:-4px; right:-6px; background:#e74c3c; color:#fff; font-size:0.55rem; font-weight:800; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+        .notif-dropdown { position:absolute; top:100%; right:0; width:340px; max-height:400px; overflow-y:auto; background:#fff; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.15); z-index:1001; display:none; border:1px solid #e8eaed; }
+        .notif-dropdown.open { display:block; }
+        .notif-dropdown-header { padding:12px 16px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+        .notif-item { padding:10px 16px; border-bottom:1px solid #f5f5f5; display:flex; gap:10px; cursor:pointer; transition:background 0.15s; font-size:0.8rem; }
+        .notif-item:hover { background:#f7f8fa; }
+        .notif-item.unread { background:#f0f7ff; }
+        .notif-item .notif-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.75rem; flex-shrink:0; }
+        .notif-item .notif-text { flex:1; }
+        .notif-item .notif-time { font-size:0.65rem; color:#999; white-space:nowrap; }
+
+        /* ===== INJURY TRACKER ===== */
+        .injury-card { background:#fff; border-radius:12px; border:1px solid #e8eaed; padding:14px; display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+        .injury-status { padding:3px 10px; border-radius:12px; font-size:0.7rem; font-weight:700; }
+        .injury-status.apte { background:#e8f5e9; color:#27ae60; }
+        .injury-status.blessé { background:#ffebee; color:#e74c3c; }
+        .injury-status.récupération { background:#fff3e0; color:#ff9800; }
+        .injury-status.suspendu { background:#f3e5f5; color:#9b59b6; }
+
+        /* ===== GOALS ===== */
+        .goal-card { background:#fff; border-radius:12px; border:1px solid #e8eaed; padding:16px; margin-bottom:10px; }
+        .goal-progress { height:8px; background:#eee; border-radius:4px; overflow:hidden; margin:8px 0; }
+        .goal-progress-bar { height:100%; border-radius:4px; transition:width 0.5s; }
+
+        /* ===== COMPARISON ===== */
+        .compare-card { display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center; }
+        .compare-player { text-align:center; }
+        .compare-stat-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:0.82rem; }
+        .compare-bar { height:6px; border-radius:3px; }
+
+        /* ===== CHARTS ===== */
+        .chart-container { background:#fff; border-radius:14px; border:1px solid #e8eaed; padding:20px; margin-bottom:16px; }
+        .chart-container canvas { max-height:300px; }
+
+        /* ===== ATTENDANCE HEATMAP ===== */
+        .heatmap-grid { display:grid; grid-template-columns:repeat(auto-fill, 20px); gap:3px; }
+        .heatmap-cell { width:18px; height:18px; border-radius:3px; cursor:default; }
+        .heatmap-cell.present { background:#27ae60; }
+        .heatmap-cell.absent { background:#e74c3c; }
+        .heatmap-cell.empty { background:#eee; }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode { background:#1a1a2e; color:#e0e0e0; }
+        body.dark-mode .pdb-sidebar { background:linear-gradient(180deg,#0d0d1a 0%,#1a1a2e 100%); }
+        body.dark-mode .pdb-main-content { background:#1a1a2e; }
+        body.dark-mode .pdb-card, body.dark-mode .ai-program-card, body.dark-mode .formation-card,
+        body.dark-mode .training-session, body.dark-mode .goal-card, body.dark-mode .injury-card,
+        body.dark-mode .chart-container, body.dark-mode .ai-chatbot { background:#16213e; border-color:#2a3a5c; color:#e0e0e0; }
+        body.dark-mode .pdb-card-header { border-color:#2a3a5c; }
+        body.dark-mode .pdb-stat { background:#16213e; border-color:#2a3a5c; }
+        body.dark-mode .perf-table th { color:#888; border-color:#2a3a5c; }
+        body.dark-mode .perf-table td { border-color:#2a3a5c; color:#ccc; }
+        body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background:#1a1a2e; color:#e0e0e0; border-color:#2a3a5c; }
+        body.dark-mode .pdb-nav-link { color:rgba(255,255,255,0.6); }
+        body.dark-mode .pdb-nav-link:hover { background:rgba(255,255,255,0.05); }
+        body.dark-mode .pdb-nav-link.active { background:rgba(231,76,60,0.15); color:#e74c3c; }
+        body.dark-mode .notif-dropdown { background:#16213e; border-color:#2a3a5c; }
+        body.dark-mode .notif-item { border-color:#2a3a5c; }
+        body.dark-mode .notif-item.unread { background:#1a2744; }
+        body.dark-mode .ai-chat-messages { background:#0d0d1a; }
+        body.dark-mode .ai-chat-msg.bot { background:#16213e; border-color:#2a3a5c; color:#e0e0e0; }
+        body.dark-mode .ai-chat-input-area { background:#16213e; border-color:#2a3a5c; }
+        body.dark-mode .form-editor { background:#16213e; color:#e0e0e0; }
+        body.dark-mode .form-editor-header { border-color:#2a3a5c; }
+        body.dark-mode .training-exercises { border-color:#2a3a5c; }
+        body.dark-mode .training-exercise { border-color:#2a3a5c; color:#bbb; }
+        body.dark-mode .compare-stat-row { border-color:#2a3a5c; }
+
+        @media (max-width:768px) {
+            .pdb-sidebar { display:none; width:100%; position:fixed; top:50px; bottom:0; left:0; z-index:999; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+            .pdb-sidebar.open { display:block; }
+            .pdb-main-content { margin-left:0; padding:12px 10px 70px; }
+            .pdb-mobile-toggle { display:flex; align-items:center; justify-content:center; position:fixed; bottom:20px; left:20px; z-index:1000; width:52px; height:52px; border-radius:50%; background:#e74c3c; border:none; color:#fff; font-size:1.2rem; cursor:pointer; box-shadow:0 4px 16px rgba(231,76,60,0.4); -webkit-tap-highlight-color:transparent; }
+            .pdb-header { padding:10px 14px; }
+            .pdb-header h2 { font-size:0.9rem; }
+            .pdb-stats { grid-template-columns:repeat(2,1fr); gap:8px; }
+            .pdb-card { border-radius:10px; }
+            .pdb-card-header { padding:12px 14px; flex-wrap:wrap; gap:8px; }
+            .pdb-card-header h3 { font-size:0.9rem; }
+            .profile-grid { grid-template-columns:1fr; }
+            .squad-summary { grid-template-columns:repeat(2,1fr); }
+            /* Messages */
+            .chat-container { flex-direction:column; height:auto; }
+            .chat-sidebar { width:100%; flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid #eee; max-height:140px; -webkit-overflow-scrolling:touch; }
+            .chat-channel { white-space:nowrap; border-left:none; border-bottom:3px solid transparent; min-width:100px; font-size:0.75rem; padding:8px 10px; }
+            .chat-channel.active { border-bottom-color:#e74c3c; border-left-color:transparent; }
+            .chat-messages { min-height:250px; max-height:350px; }
+            .chat-input-row { padding:8px; }
+            .chat-input-row input { font-size:0.85rem; }
+            /* Formations */
+            .pitch { max-height:300px; }
+            .form-editor-pitch-layout { flex-direction:column; }
+            .form-editor-pitch-right { width:100%; max-height:180px; }
+            .formation-types { justify-content:center; flex-wrap:wrap; }
+            .pitch-player-circle { width:34px; height:34px; font-size:0.55rem; }
+            .pitch-slot-circle { width:34px; height:34px; }
+            /* Training */
+            .training-calendar { grid-template-columns:repeat(2, 1fr); gap:6px; }
+            .training-session { padding:10px; font-size:0.78rem; }
+            /* AI Coach */
+            .ai-coach-header { flex-direction:column; text-align:center; gap:10px; }
+            .ai-coach-layout { grid-template-columns:1fr; }
+            .ai-chatbot { height:350px; }
+            .ai-chat-messages { padding:10px; }
+            .ai-chat-msg { max-width:90%; font-size:0.8rem; padding:10px 12px; }
+            .ai-chat-input-area { padding:8px 10px; }
+            .ai-chat-input-area input { font-size:0.85rem; }
+            /* Notifications */
+            .notif-item { padding:10px 12px; font-size:0.78rem; }
+            .notif-item .notif-icon { width:28px; height:28px; font-size:0.65rem; }
+            /* Injuries */
+            .injury-card { padding:10px; gap:8px; }
+            .injury-card img { width:34px; height:34px; }
+            .injury-status { font-size:0.65rem; padding:2px 8px; }
+            /* Goals */
+            .goal-card { padding:12px; }
+            #goalFormArea { padding:10px; }
+            #goalFormArea > div:first-child { grid-template-columns:1fr; }
+            /* Comparison */
+            #comparisonResult .compare-stat-row { font-size:0.72rem; padding:6px 0; }
+            #comparisonResult .compare-stat-row span:first-child,
+            #comparisonResult .compare-stat-row span:last-child { width:36px; font-size:0.75rem; }
+            .chart-container { padding:12px; }
+            .chart-container canvas { max-height:220px; }
+            /* Heatmap */
+            .heatmap-grid { grid-template-columns:repeat(auto-fill, 16px); gap:2px; }
+            .heatmap-cell { width:14px; height:14px; }
+            /* Perf table scroll */
+            .perf-table { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+            .perf-table th, .perf-table td { padding:8px 6px; font-size:0.7rem; white-space:nowrap; }
+            /* Squad */
+            .squad-grid { grid-template-columns:repeat(2,1fr) !important; gap:8px; }
+            .squad-player-card { padding:10px; }
+            /* Calendar & Standings */
+            .fixture-list .fixture-card { padding:10px 12px; font-size:0.8rem; }
+            .standings-table th, .standings-table td { padding:6px 4px; font-size:0.7rem; }
+        }
+        @media (max-width:480px) {
+            .pdb-stats { grid-template-columns:1fr 1fr; gap:6px; }
+            .pdb-header h2 { font-size:0.8rem; }
+            .training-calendar { grid-template-columns:1fr 1fr; }
+            .chat-messages { min-height:200px; }
+            .ai-chatbot { height:300px; }
+            .pitch { max-height:250px; }
+            .pitch-player-circle { width:30px; height:30px; font-size:0.5rem; }
+            .heatmap-grid { grid-template-columns:repeat(auto-fill, 14px); }
+            .heatmap-cell { width:12px; height:12px; }
+            .squad-summary { grid-template-columns:1fr 1fr; gap:6px; }
+            .chart-container canvas { max-height:180px; }
+            #goalFormArea > div:first-child { grid-template-columns:1fr; }
+        }
+        @media (min-width:769px) and (max-width:1100px) {
+            .pdb-sidebar { width:200px; }
+            .pdb-main-content { margin-left:200px; padding:20px; }
+            .pdb-nav-link { font-size:0.78rem; padding:10px 16px; }
+            .pdb-stats { grid-template-columns:repeat(3,1fr); }
+        }
+    </style>
+</head>
+<body data-page="espace-joueur">
+
+    <!-- LOGIN SCREEN -->
+    <div id="playerLoginScreen" class="player-login-screen">
+        <div class="login-card">
+            <div class="login-logo"><img src="uploads/images/css-logo.png" alt="CS Sfaxien"></div>
+            <h2>Espace Joueur & Entraîneur</h2>
+            <p>Connectez-vous avec vos identifiants fournis par le club</p>
+            <form id="playerLoginForm" novalidate>
+                <div class="form-group">
+                    <label>Adresse email</label>
+                    <input type="email" id="playerLoginEmail" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="playerLoginPassword" placeholder="••••••" required>
+                </div>
+                <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Se connecter</button>
+                <div class="login-error" id="loginError"></div>
+            </form>
+            <div class="login-footer">
+                <a href="index.html" style="color:#e74c3c;text-decoration:none;">← Retour au site</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD (hidden until login) -->
+    <div id="playerDashboard" style="display:none;">
+        <!-- Top Header Bar -->
+        <div style="background:#1a1a2e;padding:10px 0;position:fixed;top:0;left:0;right:0;z-index:200;height:50px;box-sizing:border-box;">
+            <div style="max-width:100%;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:30px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <button class="pdb-mobile-toggle" onclick="document.querySelector('.pdb-sidebar').classList.toggle('open')" style="position:static;width:32px;height:32px;background:none;border:none;color:rgba(255,255,255,.6);font-size:1rem;cursor:pointer;display:none;"><i class="fas fa-bars"></i></button>
+                    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;">
+                        <img src="uploads/images/css-logo.png" alt="CSS" style="width:30px;height:30px;object-fit:contain;">
+                        <span style="font-weight:800;font-size:0.88rem;">CS <strong>SFAXIEN</strong></span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="pdb" style="margin-top:50px;">
+            <!-- SIDEBAR -->
+            <aside class="pdb-sidebar" id="pdbSidebar">
+                <div class="pdb-sidebar-profile" id="pdbSidebarProfile">
+                    <!-- Filled by JS -->
+                </div>
+                <div class="pdb-sidebar-section">Navigation</div>
+                <button class="pdb-nav-link active" data-tab="performance" onclick="switchPdbTab('performance',this)">
+                    <i class="fas fa-chart-line"></i> Performance
+                </button>
+                <button class="pdb-nav-link" data-tab="formations" onclick="switchPdbTab('formations',this)">
+                    <i class="fas fa-chess-board"></i> Formations
+                </button>
+                <button class="pdb-nav-link" data-tab="messages" onclick="switchPdbTab('messages',this)">
+                    <i class="fas fa-comments"></i> <span id="tabMsgLabel">Messages</span>
+                </button>
+                <button class="pdb-nav-link" data-tab="training" onclick="switchPdbTab('training',this)">
+                    <i class="fas fa-dumbbell"></i> Entraînement
+                </button>
+                <button class="pdb-nav-link" data-tab="aicoach" onclick="switchPdbTab('aicoach',this)">
+                    <i class="fas fa-robot"></i> IA Coach
+                </button>
+                <div class="pdb-sidebar-section">Club</div>
+                <button class="pdb-nav-link" data-tab="calendar" onclick="switchPdbTab('calendar',this)">
+                    <i class="fas fa-calendar-alt"></i> Calendrier
+                </button>
+                <button class="pdb-nav-link" data-tab="standings" onclick="switchPdbTab('standings',this)">
+                    <i class="fas fa-list-ol"></i> Classement
+                </button>
+                <button class="pdb-nav-link" data-tab="squad" onclick="switchPdbTab('squad',this)">
+                    <i class="fas fa-users"></i> Effectif
+                </button>
+                <div class="pdb-sidebar-section">Suivi</div>
+                <button class="pdb-nav-link" data-tab="notifications" onclick="switchPdbTab('notifications',this)">
+                    <i class="fas fa-bell"></i> Notifications <span id="notifSidebarBadge" class="notif-badge" style="display:none;position:static;margin-left:6px;"></span>
+                </button>
+                <button class="pdb-nav-link" data-tab="injuries" onclick="switchPdbTab('injuries',this)">
+                    <i class="fas fa-heartbeat"></i> Blessures
+                </button>
+                <button class="pdb-nav-link" data-tab="goals" onclick="switchPdbTab('goals',this)">
+                    <i class="fas fa-bullseye"></i> Objectifs
+                </button>
+                <button class="pdb-nav-link" data-tab="comparison" onclick="switchPdbTab('comparison',this)">
+                    <i class="fas fa-balance-scale"></i> Comparaison
+                </button>
+                <button class="pdb-nav-link" data-tab="charts" onclick="switchPdbTab('charts',this)">
+                    <i class="fas fa-chart-area"></i> Progression
+                </button>
+                <div class="pdb-sidebar-section">Mon compte</div>
+                <button class="pdb-nav-link" data-tab="profile" onclick="switchPdbTab('profile',this)">
+                    <i class="fas fa-user-cog"></i> Mon Profil
+                </button>
+                <div style="padding:12px 20px;">
+                    <button onclick="toggleDarkMode()" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);cursor:pointer;font-size:0.8rem;"><i class="fas fa-moon"></i> Mode sombre</button>
+                </div>
+                <div class="pdb-sidebar-logout">
+                    <button onclick="PlayerAPI.logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <div class="pdb-main-content">
+                <!-- Stats -->
+                <div class="pdb-stats" id="pdbStats"></div>
+
+                <!-- Tab Panels -->
+                <div class="pdb-panel active" id="tab-performance"></div>
+                <div class="pdb-panel" id="tab-formations"></div>
+                <div class="pdb-panel" id="tab-messages"></div>
+                <div class="pdb-panel" id="tab-training"></div>
+                <div class="pdb-panel" id="tab-aicoach"></div>
+                <div class="pdb-panel" id="tab-calendar"></div>
+                <div class="pdb-panel" id="tab-standings"></div>
+                <div class="pdb-panel" id="tab-squad"></div>
+                <div class="pdb-panel" id="tab-profile"></div>
+                <div class="pdb-panel" id="tab-notifications"></div>
+                <div class="pdb-panel" id="tab-injuries"></div>
+                <div class="pdb-panel" id="tab-goals"></div>
+                <div class="pdb-panel" id="tab-comparison"></div>
+                <div class="pdb-panel" id="tab-charts"></div>
+            </div>
+        </div>
+
+        <!-- Mobile sidebar toggle -->
+        <button class="pdb-mobile-toggle" onclick="document.querySelector('.pdb-sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+    </div>
+
+    <!-- Formation Editor Modal -->
+    <div class="form-editor-modal" id="formationEditorModal">
+        <div class="form-editor">
+            <div class="form-editor-header">
+                <h3><i class="fas fa-chess-board"></i> <span id="formEditorTitle">Nouvelle formation</span></h3>
+                <button onclick="closeFormationEditor()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-editor-body">
+                <input type="hidden" id="formEditId">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <div>
+                        <label style="font-size:0.75rem;font-weight:600;color:#888;display:block;margin-bottom:4px;">Titre</label>
+                        <input type="text" id="formEditName" placeholder="Ex: Formation vs EST" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem;font-weight:600;color:#888;display:block;margin-bottom:4px;">Système</label>
+                        <select id="formEditSystem" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                            <option value="4-3-3">4-3-3</option>
+                            <option value="4-4-2">4-4-2</option>
+                            <option value="4-2-3-1">4-2-3-1</option>
+                            <option value="3-5-2">3-5-2</option>
+                            <option value="3-4-3">3-4-3</option>
+                            <option value="4-1-4-1">4-1-4-1</option>
+                            <option value="5-3-2">5-3-2</option>
+                            <option value="4-4-1-1">4-4-1-1</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <div>
+                        <label style="font-size:0.75rem;font-weight:600;color:#888;display:block;margin-bottom:4px;">Adversaire</label>
+                        <input type="text" id="formEditOpponent" placeholder="Ex: ES Tunis" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem;font-weight:600;color:#888;display:block;margin-bottom:4px;">Date du match</label>
+                        <input type="date" id="formEditDate" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem;font-weight:600;color:#888;display:block;margin-bottom:4px;">Compétition</label>
+                        <input type="text" id="formEditCompetition" placeholder="Ligue 1" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;">
+                    </div>
+                </div>
+
+                <!-- Formation Type Presets -->
+                <div style="font-size:0.75rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin:8px 0 8px;"><i class="fas fa-futbol"></i> Style tactique</div>
+                <div class="formation-types" id="formEditTypes">
+                    <button class="formation-type-btn active" data-type="equilibre" onclick="setFormationType('equilibre')"><i class="fas fa-balance-scale"></i> Équilibré</button>
+                    <button class="formation-type-btn" data-type="offensif" onclick="setFormationType('offensif')"><i class="fas fa-arrow-up"></i> Offensif</button>
+                    <button class="formation-type-btn" data-type="defensif" onclick="setFormationType('defensif')"><i class="fas fa-shield-alt"></i> Défensif</button>
+                    <button class="formation-type-btn" data-type="ultra-offensif" onclick="setFormationType('ultra-offensif')"><i class="fas fa-bolt"></i> Ultra-offensif</button>
+                    <button class="formation-type-btn" data-type="contre-attaque" onclick="setFormationType('contre-attaque')"><i class="fas fa-exchange-alt"></i> Contre-attaque</button>
+                </div>
+
+                <!-- Visual Pitch + Player Bench -->
+                <div class="form-editor-pitch-layout">
+                    <div class="form-editor-pitch-left">
+                        <div style="font-size:0.75rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;"><i class="fas fa-users"></i> Titulaires — glissez les joueurs sur le terrain</div>
+                        <div class="pitch" id="editorPitch" style="max-height:420px;"></div>
+                    </div>
+                    <div class="form-editor-pitch-right">
+                        <div style="font-size:0.75rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;"><i class="fas fa-bench"></i> Effectif disponible</div>
+                        <div class="editor-bench" id="editorBench" style="max-height:420px;"></div>
+                    </div>
+                </div>
+
+                <div style="font-size:0.75rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin:12px 0 8px;padding-bottom:6px;border-bottom:1px solid #eee;"><i class="fas fa-exchange-alt"></i> Remplaçants</div>
+                <div id="formEditSubstitutes" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;"></div>
+
+                <div>
+                    <label style="font-size:0.75rem;font-weight:600;color:#888;display:block;margin-bottom:4px;">Notes tactiques</label>
+                    <textarea id="formEditNotes" rows="3" placeholder="Instructions, consignes..." style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;resize:vertical;"></textarea>
+                </div>
+
+                <div style="display:flex;gap:10px;margin-top:20px;">
+                    <button onclick="closeFormationEditor()" style="flex:1;padding:12px;background:#f0f0f0;border:none;border-radius:10px;font-weight:600;cursor:pointer;color:#666;">Annuler</button>
+                    <button onclick="saveFormation('draft')" style="flex:1;padding:12px;background:#f39c12;border:none;border-radius:10px;font-weight:600;cursor:pointer;color:#fff;"><i class="fas fa-save"></i> Brouillon</button>
+                    <button onclick="saveFormation('published')" style="flex:2;padding:12px;background:#27ae60;border:none;border-radius:10px;font-weight:700;cursor:pointer;color:#fff;"><i class="fas fa-paper-plane"></i> Publier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/player-dashboard.js"></script>
+</body>
+</html>

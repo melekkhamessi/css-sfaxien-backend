@@ -1,0 +1,382 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e74c3c">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="CS Sfaxien - Mon Espace Personnel, tableau de bord membre">
+    <link rel="icon" href="uploads/images/css-logo.png" type="image/png">
+    <title>Mon Espace — CS Sfaxien</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Open+Sans:wght@400;600&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="dashboard">
+
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-content">
+            <a href="index.html" class="logo magnetic" data-strength="20">
+                <div class="logo-icon-wrap"><img src="uploads/images/css-logo.png" alt="CS Sfaxien" class="logo-icon"><div class="logo-ring"></div></div>
+                <span class="logo-text">CS <strong>SFAXIEN</strong></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <div class="nav-indicator" id="navIndicator"></div>
+                <a href="index.html" class="nav-link" data-section="accueil"><span class="nav-link-inner">Accueil</span></a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Compétition</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="matchs.html" class="nav-link" data-section="matchs"><i class="fas fa-futbol"></i> <span>Matchs</span></a>
+                        <a href="calendrier.html" class="nav-link" data-section="fixtures"><i class="fas fa-calendar-alt"></i> <span>Calendrier</span></a>
+                        <a href="classement.html" class="nav-link" data-section="classement"><i class="fas fa-list-ol"></i> <span>Classement</span></a>
+                        <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                    </div>
+                </div>
+                <a href="boutique.html" class="nav-link" data-section="boutique"><span class="nav-link-inner">Boutique</span></a>
+                <a href="nouvelles.html" class="nav-link" data-section="nouvelles"><span class="nav-link-inner">Nouvelles</span></a>
+                <a href="galerie.html" class="nav-link" data-section="galerie"><span class="nav-link-inner">Galerie</span></a>
+                <a href="effectif.html" class="nav-link" data-section="effectif"><span class="nav-link-inner">Effectif</span></a>
+                <a href="histoire.html" class="nav-link" data-section="histoire"><span class="nav-link-inner">Histoire</span></a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Services</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="billets.html" class="nav-link" data-section="billets"><i class="fas fa-ticket-alt"></i> <span>Billetterie</span></a>
+                        <a href="abonnement.html" class="nav-link" data-section="abonnement"><i class="fas fa-id-card"></i> <span>Abonnement</span></a>
+                        <a href="don.html" class="nav-link" data-section="don"><i class="fas fa-hand-holding-heart"></i> <span>Don</span></a>
+                        <a href="sections.html" class="nav-link" data-section="sections"><i class="fas fa-medal"></i> <span>Sections Sportives</span></a>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-actions">
+                <a href="dashboard.html" class="user-account-btn active" id="userAccountBtn" title="Mon Espace">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-btn-name" id="userBtnName">Mon Espace</span>
+                </a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <div class="hamburger-inner"><span></span><span></span><span></span></div>
+            </button>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="page-hero-bg"></div>
+        <div class="page-hero-overlay"></div>
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="page-hero-tag"><i class="fas fa-user-circle"></i> <span>Espace Membre</span></span>
+                <h1 class="page-hero-title">Mon Tableau de Bord</h1>
+                <p class="page-hero-subtitle">Gérez vos achats, billets, dons et abonnements</p>
+                <div class="page-breadcrumb">
+                    <a href="index.html">Accueil</a> <i class="fas fa-chevron-right"></i> <span>Mon Espace</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD MAIN -->
+    <section class="section dash-section" id="dashboardMain">
+        <div class="container">
+
+            <!-- Welcome Banner -->
+            <div class="dash-welcome" id="dashWelcome" data-reveal="up">
+                <div class="dash-welcome-left">
+                    <div class="dash-avatar" id="dashAvatar"><i class="fas fa-user"></i></div>
+                    <div class="dash-welcome-info">
+                        <h2 id="dashUserName">Bienvenue !</h2>
+                        <div class="dash-membership" id="dashMembership">
+                            <i class="fas fa-crown"></i> <span>Standard</span>
+                        </div>
+                        <p class="dash-email" id="dashEmail"></p>
+                    </div>
+                </div>
+                <div class="dash-welcome-right">
+                    <div class="dash-points">
+                        <span class="dash-points-num" id="dashPoints">0</span>
+                        <span class="dash-points-label">Points fidélité</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="dash-stats-grid" data-reveal="up">
+                <div class="dash-stat-card">
+                    <div class="dash-stat-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="dash-stat-info">
+                        <span class="dash-stat-num" id="statOrders">0</span>
+                        <span class="dash-stat-label">Commandes</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <div class="dash-stat-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <div class="dash-stat-info">
+                        <span class="dash-stat-num" id="statTickets">0</span>
+                        <span class="dash-stat-label">Billets achetés</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <div class="dash-stat-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <div class="dash-stat-info">
+                        <span class="dash-stat-num" id="statDonations">0</span>
+                        <span class="dash-stat-label">Dons (TND)</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <div class="dash-stat-icon"><i class="fas fa-coins"></i></div>
+                    <div class="dash-stat-info">
+                        <span class="dash-stat-num" id="statSpent">0</span>
+                        <span class="dash-stat-label">Total dépensé (TND)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Member Card -->
+            <div class="dash-member-card" id="dashSocialMemberCard" data-reveal="up" style="display:none;">
+                <div class="dash-member-card-bg"></div>
+                <div class="dash-member-card-content">
+                    <div class="dash-member-card-header">
+                        <div class="dash-member-card-logo">
+                            <img src="uploads/images/css-logo.png" alt="CSS" style="width:50px;height:50px;object-fit:contain;">
+                        </div>
+                        <div>
+                            <h3 style="margin:0;font-size:1.1rem;font-weight:800;letter-spacing:2px;color:#fff;">CARTE DE MEMBRE</h3>
+                            <p style="margin:0;font-size:0.75rem;color:rgba(255,255,255,0.5);letter-spacing:1px;">CS SFAXIEN — MEMBRE SOCIAL</p>
+                        </div>
+                    </div>
+                    <div class="dash-member-card-body">
+                        <div class="dash-member-card-name" id="smCardName">—</div>
+                        <div class="dash-member-card-details">
+                            <div><span>N° Membre</span><strong id="smCardNumber">—</strong></div>
+                            <div><span>Formule</span><strong id="smCardPlan">—</strong></div>
+                            <div><span>Saison</span><strong id="smCardSeason">—</strong></div>
+                            <div><span>Statut</span><strong id="smCardStatus">—</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tabs -->
+            <div class="dash-tabs" data-reveal="up">
+                <button class="dash-tab active" data-tab="orders"><i class="fas fa-receipt"></i> Mes Commandes</button>
+                <button class="dash-tab" data-tab="quick-actions"><i class="fas fa-bolt"></i> Actions Rapides</button>
+                <button class="dash-tab" data-tab="profile"><i class="fas fa-user-edit"></i> Mon Profil</button>
+            </div>
+
+            <!-- Tab: Orders -->
+            <div class="dash-tab-content active" id="tabOrders">
+                <div class="dash-orders-list" id="ordersContainer">
+                    <div class="dash-empty"><i class="fas fa-receipt"></i><p>Aucune commande pour le moment.</p></div>
+                </div>
+            </div>
+
+            <!-- Tab: Quick Actions -->
+            <div class="dash-tab-content" id="tabQuickActions">
+                <div class="dash-quick-grid">
+                    <!-- Buy Ticket -->
+                    <div class="dash-quick-card" data-reveal="up">
+                        <div class="dqc-icon"><i class="fas fa-ticket-alt"></i></div>
+                        <h3>Acheter un Billet</h3>
+                        <p>Réservez vos places pour les prochains matchs</p>
+                        <div class="dqc-form" id="quickTicketForm">
+                            <select id="quickTicketMatch" class="dash-input">
+                                <option value="">Sélectionner un match...</option>
+                            </select>
+                            <select id="quickTicketZone" class="dash-input">
+                                <option value="">Sélectionner une zone...</option>
+                            </select>
+                            <div class="dqc-qty">
+                                <button type="button" class="qty-btn" id="qtTicketMinus"><i class="fas fa-minus"></i></button>
+                                <span class="qty-val" id="qtTicketQty">1</span>
+                                <button type="button" class="qty-btn" id="qtTicketPlus"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div class="dqc-promo">
+                                <input type="text" id="ticketPromoCode" class="dash-input" placeholder="Code promo (optionnel)">
+                                <button type="button" class="btn-apply-promo" id="ticketApplyPromo">Appliquer</button>
+                            </div>
+                            <div class="dqc-total">Total : <strong id="quickTicketTotal">0 TND</strong> <span class="dqc-discount-info" id="ticketDiscountInfo"></span></div>
+                            <button class="dash-btn dash-btn-primary" id="quickTicketBuy"><i class="fas fa-shopping-cart"></i> Acheter</button>
+                        </div>
+                    </div>
+
+                    <!-- Buy Product -->
+                    <div class="dash-quick-card" data-reveal="up">
+                        <div class="dqc-icon"><i class="fas fa-shirt"></i></div>
+                        <h3>Boutique</h3>
+                        <p>Achetez les produits officiels du club</p>
+                        <div class="dqc-form" id="quickStoreForm">
+                            <select id="quickProduct" class="dash-input">
+                                <option value="">Sélectionner un produit...</option>
+                            </select>
+                            <div class="dqc-qty">
+                                <button type="button" class="qty-btn" id="qtProdMinus"><i class="fas fa-minus"></i></button>
+                                <span class="qty-val" id="qtProdQty">1</span>
+                                <button type="button" class="qty-btn" id="qtProdPlus"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div class="dqc-promo">
+                                <input type="text" id="prodPromoCode" class="dash-input" placeholder="Code promo (optionnel)">
+                                <button type="button" class="btn-apply-promo" id="prodApplyPromo">Appliquer</button>
+                            </div>
+                            <div class="dqc-total">Total : <strong id="quickProdTotal">0 TND</strong> <span class="dqc-discount-info" id="prodDiscountInfo"></span></div>
+                            <button class="dash-btn dash-btn-primary" id="quickProdBuy"><i class="fas fa-shopping-cart"></i> Commander</button>
+                        </div>
+                    </div>
+
+                    <!-- Subscribe -->
+                    <div class="dash-quick-card" data-reveal="up">
+                        <div class="dqc-icon"><i class="fas fa-id-card"></i></div>
+                        <h3>Abonnement</h3>
+                        <p>Abonnez-vous pour la saison</p>
+                        <div class="dqc-form" id="quickSubForm">
+                            <select id="quickSubPlan" class="dash-input">
+                                <option value="">Sélectionner un plan...</option>
+                            </select>
+                            <div class="dqc-promo">
+                                <input type="text" id="subPromoCode" class="dash-input" placeholder="Code promo (optionnel)">
+                                <button type="button" class="btn-apply-promo" id="subApplyPromo">Appliquer</button>
+                            </div>
+                            <div class="dqc-total">Total : <strong id="quickSubTotal">0 TND</strong> <span class="dqc-discount-info" id="subDiscountInfo"></span></div>
+                            <button class="dash-btn dash-btn-primary" id="quickSubBuy"><i class="fas fa-check-circle"></i> S'abonner</button>
+                        </div>
+                    </div>
+
+                    <!-- Donate -->
+                    <div class="dash-quick-card" data-reveal="up">
+                        <div class="dqc-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                        <h3>Faire un Don</h3>
+                        <p>Soutenez le club avec un don</p>
+                        <div class="dqc-form" id="quickDonForm">
+                            <div class="don-presets">
+                                <button type="button" class="don-preset" data-amount="10">10 TND</button>
+                                <button type="button" class="don-preset" data-amount="25">25 TND</button>
+                                <button type="button" class="don-preset" data-amount="50">50 TND</button>
+                                <button type="button" class="don-preset" data-amount="100">100 TND</button>
+                                <button type="button" class="don-preset" data-amount="200">200 TND</button>
+                            </div>
+                            <input type="number" id="donAmount" class="dash-input" placeholder="Montant personnalisé (TND)" min="1">
+                            <input type="text" id="donMessage" class="dash-input" placeholder="Message (optionnel)">
+                            <button class="dash-btn dash-btn-primary" id="quickDonBtn"><i class="fas fa-heart"></i> Donner</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Profile -->
+            <div class="dash-tab-content" id="tabProfile">
+                <div class="dash-profile-grid">
+                    <div class="dash-profile-card" data-reveal="up">
+                        <h3><i class="fas fa-user-edit"></i> Informations Personnelles</h3>
+                        <form id="profileForm">
+                            <div class="dash-form-row">
+                                <div class="dash-form-group">
+                                    <label>Prénom</label>
+                                    <input type="text" id="profFirstName" class="dash-input" required>
+                                </div>
+                                <div class="dash-form-group">
+                                    <label>Nom</label>
+                                    <input type="text" id="profLastName" class="dash-input" required>
+                                </div>
+                            </div>
+                            <div class="dash-form-group">
+                                <label>Téléphone</label>
+                                <input type="tel" id="profPhone" class="dash-input" placeholder="+216 XX XXX XXX">
+                            </div>
+                            <div class="dash-form-group">
+                                <label>Adresse</label>
+                                <input type="text" id="profAddress" class="dash-input" placeholder="Votre adresse">
+                            </div>
+                            <div class="dash-form-group">
+                                <label>Ville</label>
+                                <input type="text" id="profCity" class="dash-input" placeholder="Sfax">
+                            </div>
+                            <button type="submit" class="dash-btn dash-btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+                        </form>
+                    </div>
+
+                    <div class="dash-profile-card" data-reveal="up">
+                        <h3><i class="fas fa-lock"></i> Changer le Mot de Passe</h3>
+                        <form id="passwordForm">
+                            <div class="dash-form-group">
+                                <label>Mot de passe actuel</label>
+                                <input type="password" id="profCurrentPwd" class="dash-input" required>
+                            </div>
+                            <div class="dash-form-group">
+                                <label>Nouveau mot de passe</label>
+                                <input type="password" id="profNewPwd" class="dash-input" required minlength="6">
+                            </div>
+                            <div class="dash-form-group">
+                                <label>Confirmer le nouveau mot de passe</label>
+                                <input type="password" id="profConfirmPwd" class="dash-input" required minlength="6">
+                            </div>
+                            <button type="submit" class="dash-btn dash-btn-primary"><i class="fas fa-key"></i> Modifier</button>
+                        </form>
+                    </div>
+
+                    <div class="dash-profile-card dash-membership-card" data-reveal="up">
+                        <h3><i class="fas fa-crown"></i> Programme Fidélité</h3>
+                        <div class="membership-tiers">
+                            <div class="tier-item" data-tier="standard">
+                                <div class="tier-icon"><i class="fas fa-user"></i></div>
+                                <div class="tier-info">
+                                    <strong>Standard</strong>
+                                    <span>0 — 399 TND</span>
+                                </div>
+                            </div>
+                            <div class="tier-item" data-tier="silver">
+                                <div class="tier-icon"><i class="fas fa-medal"></i></div>
+                                <div class="tier-info">
+                                    <strong>Silver</strong>
+                                    <span>400+ TND — 5% remise</span>
+                                </div>
+                            </div>
+                            <div class="tier-item" data-tier="gold">
+                                <div class="tier-icon"><i class="fas fa-trophy"></i></div>
+                                <div class="tier-info">
+                                    <strong>Gold</strong>
+                                    <span>1000+ TND — 10% remise</span>
+                                </div>
+                            </div>
+                            <div class="tier-item" data-tier="platinum">
+                                <div class="tier-icon"><i class="fas fa-gem"></i></div>
+                                <div class="tier-info">
+                                    <strong>Platinum</strong>
+                                    <span>2000+ TND — 15% remise</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="membership-progress">
+                            <div class="membership-bar"><div class="membership-bar-fill" id="membershipBarFill"></div></div>
+                            <p class="membership-next" id="membershipNext"></p>
+                        </div>
+                        <button class="dash-btn dash-btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-wave"><svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,40 C360,100 720,0 1080,50 C1260,75 1380,20 1440,40 L1440,100 L0,100 Z" fill="currentColor"/></svg></div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" data-reveal="up"><h4><i class="fas fa-futbol"></i> CS SFAXIEN</h4><p>Club Sportif Sfaxien — Fondé le 28 mai 1928 à Sfax. La fierté du Sud.</p><p class="footer-slogan">🖤🤍 النادي الرياضي الصفاقسي</p></div>
+                <div class="footer-col" data-reveal="up"><h4>Navigation</h4><ul><li><a href="index.html">Accueil</a></li><li><a href="matchs.html">Résultats</a></li><li><a href="calendrier.html">Calendrier</a></li><li><a href="classement.html">Classement</a></li><li><a href="nouvelles.html">Actualités</a></li><li><a href="effectif.html">Effectif</a></li></ul></div>
+                <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                <div class="footer-col" data-reveal="up"><h4>Services</h4><ul><li><a href="boutique.html">Boutique</a></li><li><a href="billets.html">Billetterie</a></li><li><a href="abonnement.html">Abonnement</a></li><li><a href="galerie.html">Galerie</a></li><li><a href="histoire.html">Histoire</a></li><li><a href="don.html">Faire un Don</a></li></ul></div>
+                <div class="footer-col" data-reveal="up"><h4>Suivez-nous</h4><div class="social-links"><a href="https://www.facebook.com/CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Facebook"><i class="fab fa-facebook"></i></a><a href="https://www.instagram.com/cssfaxien_officiel/" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@cssfaxien_officiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><a href="https://www.youtube.com/@CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="YouTube"><i class="fab fa-youtube"></i></a><a href="https://x.com/CSSfaxien" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="X"><i class="fab fa-x-twitter"></i></a></div><h4 style="margin-top:1.5rem;">Contact</h4><p><i class="fas fa-envelope"></i> contact@cssfaxien.tn</p><p><i class="fas fa-phone"></i> +216 74 123 456</p><p><i class="fas fa-map-marker-alt"></i> Stade Taïeb Mhiri, Sfax 3000</p></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Club Sportif Sfaxien — Tous droits réservés | Fondé en 1928</p></div>
+        </div>
+    </footer>
+<script src="js/oauth-init.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e74c3c">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="CS Sfaxien - Histoire, palmarès et légendes du club depuis 1928">
+    <link rel="icon" href="uploads/images/css-logo.png" type="image/png">
+    <title>Histoire — CS Sfaxien</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Open+Sans:wght@400;600&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="histoire">
+
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-wrapper">
+            <div class="loader-cube">
+                <div class="cube-face cube-front">CSS</div>
+                <div class="cube-face cube-back">⚽</div>
+                <div class="cube-face cube-left">1928</div>
+                <div class="cube-face cube-right">🏆</div>
+                <div class="cube-face cube-top">🖤🤍</div>
+                <div class="cube-face cube-bottom">SFAX</div>
+            </div>
+            <div class="loader-glitch" data-text="CS SFAXIEN">CS SFAXIEN</div>
+            <div class="loader-progress"><div class="loader-progress-bar" id="loaderBar"></div></div>
+            <div class="loader-percent" id="loaderPercent">0%</div>
+        </div>
+        <div class="loader-blob loader-blob-1"></div>
+        <div class="loader-blob loader-blob-2"></div>
+        <div class="loader-blob loader-blob-3"></div>
+    </div>
+
+    <header class="main-header" id="mainHeader">
+        <div class="container header-content">
+            <a href="index.html" class="logo magnetic" data-strength="20">
+                <div class="logo-icon-wrap"><img src="uploads/images/css-logo.png" alt="CS Sfaxien" class="logo-icon"><div class="logo-ring"></div></div>
+                <span class="logo-text">CS <strong>SFAXIEN</strong></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <div class="nav-indicator" id="navIndicator"></div>
+                <a href="index.html" class="nav-link" data-section="accueil"><span class="nav-link-inner">Accueil</span></a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Compétition</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="matchs.html" class="nav-link" data-section="matchs"><i class="fas fa-futbol"></i> <span>Matchs</span></a>
+                        <a href="calendrier.html" class="nav-link" data-section="fixtures"><i class="fas fa-calendar-alt"></i> <span>Calendrier</span></a>
+                        <a href="classement.html" class="nav-link" data-section="classement"><i class="fas fa-list-ol"></i> <span>Classement</span></a>
+                        <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                    </div>
+                </div>
+                <a href="boutique.html" class="nav-link" data-section="boutique"><span class="nav-link-inner">Boutique</span></a>
+                <a href="nouvelles.html" class="nav-link" data-section="nouvelles"><span class="nav-link-inner">Nouvelles</span></a>
+                <a href="galerie.html" class="nav-link" data-section="galerie"><span class="nav-link-inner">Galerie</span></a>
+                <a href="effectif.html" class="nav-link" data-section="effectif"><span class="nav-link-inner">Effectif</span></a>
+                <a href="histoire.html" class="nav-link active" data-section="histoire"><span class="nav-link-inner">Histoire</span></a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Services</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="billets.html" class="nav-link" data-section="billets"><i class="fas fa-ticket-alt"></i> <span>Billetterie</span></a>
+                        <a href="abonnement.html" class="nav-link" data-section="abonnement"><i class="fas fa-id-card"></i> <span>Abonnement</span></a>
+                        <a href="don.html" class="nav-link" data-section="don"><i class="fas fa-hand-holding-heart"></i> <span>Don</span></a>
+                        <a href="sections.html" class="nav-link" data-section="sections"><i class="fas fa-medal"></i> <span>Sections Sportives</span></a>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-actions">
+                <a href="dashboard.html" class="user-account-btn" id="userAccountBtn" title="Mon Espace">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-btn-name" id="userBtnName">Connexion</span>
+                </a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><div class="hamburger-inner"><span></span><span></span><span></span></div></button>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="page-hero-bg"></div>
+        <div class="page-hero-overlay"></div>
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="page-hero-tag"><i class="fas fa-landmark"></i> <span>Depuis 1928</span></span>
+                <h1 class="page-hero-title">Histoire du Club</h1>
+                <p class="page-hero-subtitle"><span>Près d'un siècle de passion, de gloire et de légendes noir et blanc</span></p>
+                <div class="page-breadcrumb">
+                    <a href="index.html">Accueil</a> <i class="fas fa-chevron-right"></i> <span>Histoire</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOUNDING / ABOUT ===== -->
+    <section class="section history-founding" id="founding">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag"><i class="fas fa-flag"></i> Fondation</span>
+                <h2 class="section-title split-text">Naissance d'une Légende</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="history-intro" data-reveal="up">
+                <div class="history-intro-card">
+                    <div class="history-intro-icon"><i class="fas fa-futbol"></i></div>
+                    <div class="history-intro-body">
+                        <h3>Club Sportif Sfaxien</h3>
+                        <p class="history-founding-date"><i class="fas fa-calendar-alt"></i> Fondé le <strong>26 avril 1928</strong></p>
+                        <p>Le Club Sportif Sfaxien, surnommé le <strong>CSS</strong>, a été fondé le 26 avril 1928 à Sfax, la deuxième ville de Tunisie. Né de la volonté de jeunes Sfaxiens passionnés de football, le club est rapidement devenu un symbole d'identité et de fierté pour toute la région du Sud tunisien.</p>
+                        <p>Depuis sa création, le CSS a toujours porté les couleurs <strong>noir et blanc</strong>, symboles d'élégance et de détermination. Le club évolue au mythique <strong>Stade Taïeb Mhiri</strong>, véritable forteresse où les adversaires redoutent de se déplacer.</p>
+                        <p>Au fil des décennies, le CSS s'est imposé comme l'un des clubs les plus titrés du football tunisien et africain, avec un palmarès impressionnant qui témoigne de son excellence sur la scène nationale et continentale.</p>
+                    </div>
+                </div>
+                <div class="history-facts-grid">
+                    <div class="history-fact-card" data-reveal="up">
+                        <div class="history-fact-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="history-fact-value">1928</div>
+                        <div class="history-fact-label">Année de Fondation</div>
+                    </div>
+                    <div class="history-fact-card" data-reveal="up">
+                        <div class="history-fact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="history-fact-value">Sfax</div>
+                        <div class="history-fact-label">Ville d'origine</div>
+                    </div>
+                    <div class="history-fact-card" data-reveal="up">
+                        <div class="history-fact-icon"><i class="fas fa-home"></i></div>
+                        <div class="history-fact-value">Taïeb Mhiri</div>
+                        <div class="history-fact-label">Stade Principal</div>
+                    </div>
+                    <div class="history-fact-card" data-reveal="up">
+                        <div class="history-fact-icon"><i class="fas fa-palette"></i></div>
+                        <div class="history-fact-value">⚫⚪</div>
+                        <div class="history-fact-label">Noir & Blanc</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TIMELINE ===== -->
+    <section class="section history-timeline-section" id="timeline">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag"><i class="fas fa-clock"></i> Chronologie</span>
+                <h2 class="section-title split-text">Moments Clés</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="history-timeline" id="historyTimeline"></div>
+        </div>
+    </section>
+
+    <!-- ===== TROPHIES ===== -->
+    <section class="section history-trophies-section" id="trophies">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag"><i class="fas fa-trophy"></i> Palmarès</span>
+                <h2 class="section-title split-text">Les Trophées</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="trophy-summary" data-reveal="up">
+                <div class="trophy-total">
+                    <span class="trophy-total-num" id="trophyTotalCount">0</span>
+                    <span class="trophy-total-label">Trophées au Total</span>
+                </div>
+            </div>
+            <div class="trophies-grid" id="trophiesGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===== LEGENDS ===== -->
+    <section class="section history-legends-section" id="legends">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag"><i class="fas fa-star"></i> Légendes</span>
+                <h2 class="section-title split-text">Les Légendes du Club</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="legends-grid" id="legendsGrid"></div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="footer-wave"><svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,40 C360,100 720,0 1080,50 C1260,75 1380,20 1440,40 L1440,100 L0,100 Z" fill="currentColor"/></svg></div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" data-reveal="up"><h4><i class="fas fa-futbol"></i> CS SFAXIEN</h4><p>Club Sportif Sfaxien — Fondé le 28 mai 1928 à Sfax. La fierté du Sud.</p><p class="footer-slogan">🖤🤍 النادي الرياضي الصفاقسي</p></div>
+                <div class="footer-col" data-reveal="up"><h4>Navigation</h4><ul><li><a href="index.html">Accueil</a></li><li><a href="matchs.html">Résultats</a></li><li><a href="calendrier.html">Calendrier</a></li><li><a href="classement.html">Classement</a></li><li><a href="nouvelles.html">Actualités</a></li><li><a href="effectif.html">Effectif</a></li></ul></div>
+                <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                <div class="footer-col" data-reveal="up"><h4>Services</h4><ul><li><a href="boutique.html">Boutique</a></li><li><a href="billets.html">Billetterie</a></li><li><a href="abonnement.html">Abonnement</a></li><li><a href="galerie.html">Galerie</a></li><li><a href="histoire.html">Histoire</a></li><li><a href="don.html">Faire un Don</a></li></ul></div>
+                <div class="footer-col" data-reveal="up"><h4>Suivez-nous</h4><div class="social-links"><a href="https://www.facebook.com/CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Facebook"><i class="fab fa-facebook"></i></a><a href="https://www.instagram.com/cssfaxien_officiel/" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@cssfaxien_officiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><a href="https://www.youtube.com/@CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="YouTube"><i class="fab fa-youtube"></i></a><a href="https://x.com/CSSfaxien" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="X"><i class="fab fa-x-twitter"></i></a></div><h4 style="margin-top:1.5rem;">Contact</h4><p><i class="fas fa-envelope"></i> contact@cssfaxien.tn</p><p><i class="fas fa-phone"></i> +216 74 123 456</p><p><i class="fas fa-map-marker-alt"></i> Stade Taïeb Mhiri, Sfax 3000</p></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Club Sportif Sfaxien — Tous droits réservés | Fondé en 1928</p></div>
+        </div>
+    </footer>
+<script src="js/oauth-init.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

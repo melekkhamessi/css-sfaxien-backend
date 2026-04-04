@@ -1,0 +1,587 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e74c3c">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="Site officiel du Club Sportif Sfaxien — Fondé en 1928 à Sfax. Matchs, résultats, classement Ligue 1, effectif, galerie, billetterie et actualités du CSS.">
+    <meta name="keywords" content="CS Sfaxien, Club Sportif Sfaxien, CSS, football tunisien, Ligue 1, Sfax, Taïeb Mhiri">
+    <meta property="og:title" content="Club Sportif Sfaxien — Site Officiel">
+    <meta property="og:description" content="Le site officiel du CS Sfaxien. Suivez l'actualité du club noir et blanc depuis 1928.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="uploads/images/css-logo.png" type="image/png">
+    <title>Club Sportif Sfaxien — Site Officiel | Depuis 1928</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Open+Sans:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="accueil">
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- LOADING SCREEN -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-wrapper">
+            <div class="loader-cube">
+                <div class="cube-face cube-front">CSS</div>
+                <div class="cube-face cube-back">⚽</div>
+                <div class="cube-face cube-left">1928</div>
+                <div class="cube-face cube-right">🏆</div>
+                <div class="cube-face cube-top">🖤🤍</div>
+                <div class="cube-face cube-bottom">SFAX</div>
+            </div>
+            <div class="loader-glitch" data-text="CS SFAXIEN">CS SFAXIEN</div>
+            <div class="loader-progress">
+                <div class="loader-progress-bar" id="loaderBar"></div>
+            </div>
+            <div class="loader-percent" id="loaderPercent">0%</div>
+        </div>
+        <div class="loader-blob loader-blob-1"></div>
+        <div class="loader-blob loader-blob-2"></div>
+        <div class="loader-blob loader-blob-3"></div>
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-content">
+            <a href="index.html" class="logo magnetic" data-strength="20">
+                <div class="logo-icon-wrap">
+                    <img src="uploads/images/css-logo.png" alt="CS Sfaxien" class="logo-icon">
+                    <div class="logo-ring"></div>
+                </div>
+                <span class="logo-text">CS <strong>SFAXIEN</strong></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <div class="nav-indicator" id="navIndicator"></div>
+                <a href="index.html" class="nav-link active" data-section="accueil">
+                    <span class="nav-link-inner">Accueil</span>
+                </a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Compétition</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="matchs.html" class="nav-link" data-section="matchs"><i class="fas fa-futbol"></i> <span>Matchs</span></a>
+                        <a href="calendrier.html" class="nav-link" data-section="fixtures"><i class="fas fa-calendar-alt"></i> <span>Calendrier</span></a>
+                        <a href="classement.html" class="nav-link" data-section="classement"><i class="fas fa-list-ol"></i> <span>Classement</span></a>
+                        <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                    </div>
+                </div>
+                <a href="boutique.html" class="nav-link" data-section="boutique">
+                    <span class="nav-link-inner">Boutique</span>
+                </a>
+                <a href="nouvelles.html" class="nav-link" data-section="nouvelles">
+                    <span class="nav-link-inner">Nouvelles</span>
+                </a>
+                <a href="galerie.html" class="nav-link" data-section="galerie">
+                    <span class="nav-link-inner">Galerie</span>
+                </a>
+                <a href="effectif.html" class="nav-link" data-section="effectif">
+                    <span class="nav-link-inner">Effectif</span>
+                </a>
+                <a href="histoire.html" class="nav-link" data-section="histoire">
+                    <span class="nav-link-inner">Histoire</span>
+                </a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Services</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="billets.html" class="nav-link" data-section="billets"><i class="fas fa-ticket-alt"></i> <span>Billetterie</span></a>
+                        <a href="abonnement.html" class="nav-link" data-section="abonnement"><i class="fas fa-id-card"></i> <span>Abonnement</span></a>
+                        <a href="don.html" class="nav-link" data-section="don"><i class="fas fa-hand-holding-heart"></i> <span>Don</span></a>
+                        <a href="sections.html" class="nav-link" data-section="sections"><i class="fas fa-medal"></i> <span>Sections Sportives</span></a>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-actions">
+                <a href="dashboard.html" class="user-account-btn" id="userAccountBtn" title="Mon Espace">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-btn-name" id="userBtnName">Connexion</span>
+                </a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <div class="hamburger-inner">
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="accueil">
+        <div class="hero-video-wrap">
+            <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" poster="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&q=80">
+                <source src="https://videos.pexels.com/video-files/2890132/2890132-uhd_2560_1440_30fps.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-overlay"></div>
+        <canvas id="heroCanvas" class="hero-canvas"></canvas>
+        <div class="hero-aurora"></div>
+        <div class="hero-mesh"></div>
+
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-badge" id="heroBadge"><img src="uploads/images/css-logo.png" alt="CS Sfaxien" style="width:80px;height:80px;object-fit:contain;"></div>
+            <h1 class="hero-title" id="heroTitle" data-text="CS SFAXIEN">CS SFAXIEN</h1>
+            <div class="hero-subtitle-wrap">
+                <p class="hero-subtitle" id="heroSubtitle">النادي الرياضي الصفاقسي — La fierté du Sud</p>
+                <div class="subtitle-line subtitle-line-left"></div>
+                <div class="subtitle-line subtitle-line-right"></div>
+            </div>
+            <div class="hero-stats" id="heroStats">
+                <div class="stat-box magnetic" data-strength="15">
+                    <div class="stat-glow"></div>
+                    <span class="stat-number" id="heroWins" data-target="0">0</span>
+                    <span class="stat-label">Victoires</span>
+                </div>
+                <div class="stat-box magnetic" data-strength="15">
+                    <div class="stat-glow"></div>
+                    <span class="stat-number" id="heroDraws" data-target="0">0</span>
+                    <span class="stat-label">Nuls</span>
+                </div>
+                <div class="stat-box magnetic" data-strength="15">
+                    <div class="stat-glow"></div>
+                    <span class="stat-number" id="heroLosses" data-target="0">0</span>
+                    <span class="stat-label">Défaites</span>
+                </div>
+            </div>
+            <a href="matchs.html" class="btn btn-primary hero-btn magnetic" data-strength="25">
+                <span class="btn-text">Voir les Matchs</span>
+                <span class="btn-shine"></span>
+            </a>
+        </div>
+
+        <div class="scroll-indicator" id="scrollIndicator">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span>Défiler</span>
+        </div>
+    </section>
+
+    <!-- PROCHAIN MATCH BANNER -->
+    <section class="next-match-banner" id="nextMatchBanner">
+        <div class="banner-particles" id="bannerParticles"></div>
+        <div class="container">
+            <h3 class="banner-title"><i class="fas fa-bolt"></i> PROCHAIN MATCH <i class="fas fa-bolt"></i></h3>
+            <div class="next-match-info" id="nextMatchInfo">
+                <span class="next-match-detail">Aucun match prévu</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PALMARES / TROPHY BAR -->
+    <section class="home-trophy-bar" id="homeTrophyBar">
+        <div class="container">
+            <div class="trophy-bar-inner">
+                <div class="trophy-bar-item" data-reveal="up">
+                    <div class="trophy-bar-icon"><i class="fas fa-trophy"></i></div>
+                    <span class="trophy-bar-count">8</span>
+                    <span class="trophy-bar-label">Championnats</span>
+                </div>
+                <div class="trophy-bar-item" data-reveal="up">
+                    <div class="trophy-bar-icon"><i class="fas fa-award"></i></div>
+                    <span class="trophy-bar-count">7</span>
+                    <span class="trophy-bar-label">Coupes de Tunisie</span>
+                </div>
+                <div class="trophy-bar-item" data-reveal="up">
+                    <div class="trophy-bar-icon"><i class="fas fa-globe-africa"></i></div>
+                    <span class="trophy-bar-count">3</span>
+                    <span class="trophy-bar-label">Coupe de la Confédération</span>
+                </div>
+                <div class="trophy-bar-item" data-reveal="up">
+                    <div class="trophy-bar-icon"><i class="fas fa-star"></i></div>
+                    <span class="trophy-bar-count">1</span>
+                    <span class="trophy-bar-label">Coupe de la CAF</span>
+                </div>
+                <div class="trophy-bar-item" data-reveal="up">
+                    <div class="trophy-bar-icon"><i class="fas fa-futbol"></i></div>
+                    <span class="trophy-bar-count">2</span>
+                    <span class="trophy-bar-label">Coupes Arabes</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPCOMING FIXTURES / CALENDRIER -->
+    <section class="section home-section" id="homeFixturesSection">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Calendrier</span>
+                <h2 class="section-title split-text">Prochains Matchs</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="home-fixtures-grid" id="homeFixturesGrid">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="home-section-cta" data-reveal="up">
+                <a href="calendrier.html" class="btn btn-primary magnetic" data-strength="15">
+                    <span class="btn-text">Voir tout le calendrier</span>
+                    <span class="btn-shine"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTUALITÉS / NEWS -->
+    <section class="section home-section home-section-alt" id="homeNewsSection">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Actualités</span>
+                <h2 class="section-title split-text">Dernières Nouvelles</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="home-news-grid" id="homeNewsGrid">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="home-section-cta" data-reveal="up">
+                <a href="nouvelles.html" class="btn btn-primary magnetic" data-strength="15">
+                    <span class="btn-text">Toutes les actualités</span>
+                    <span class="btn-shine"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- JOUEURS / PLAYER SPOTLIGHT -->
+    <section class="section home-section" id="homePlayersSection">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Effectif</span>
+                <h2 class="section-title split-text">Joueurs Vedettes</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="home-players-grid" id="homePlayersGrid">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="home-section-cta" data-reveal="up">
+                <a href="effectif.html" class="btn btn-primary magnetic" data-strength="15">
+                    <span class="btn-text">Voir tout l'effectif</span>
+                    <span class="btn-shine"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALERIE / PHOTOS -->
+    <section class="section home-section home-section-alt" id="homeGallerySection">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Galerie</span>
+                <h2 class="section-title split-text">Photos & Vidéos</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="home-gallery-grid" id="homeGalleryGrid">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="home-section-cta" data-reveal="up">
+                <a href="galerie.html" class="btn btn-primary magnetic" data-strength="15">
+                    <span class="btn-text">Voir la galerie complète</span>
+                    <span class="btn-shine"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOUTIQUE / STORE PREVIEW -->
+    <section class="section home-section" id="homeStoreSection">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Boutique Officielle</span>
+                <h2 class="section-title split-text">Équipez-vous</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="home-store-grid" id="homeStoreGrid">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="home-section-cta" data-reveal="up">
+                <a href="boutique.html" class="btn btn-primary magnetic" data-strength="15">
+                    <span class="btn-text">Visiter la boutique</span>
+                    <span class="btn-shine"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPONSORS / PARTENAIRES -->
+    <section class="section home-section home-section-alt sponsors-section" id="sponsorsSection">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Partenaires</span>
+                <h2 class="section-title split-text">Nos Partenaires Officiels</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="sponsors-grid" data-reveal="up">
+                <div class="sponsor-card sponsor-main">
+                    <div class="sponsor-logo"><i class="fas fa-shirt"></i></div>
+                    <span class="sponsor-name">Adidas</span>
+                    <span class="sponsor-type">Équipementier Officiel</span>
+                </div>
+                <div class="sponsor-card">
+                    <div class="sponsor-logo"><i class="fas fa-landmark"></i></div>
+                    <span class="sponsor-name">STB</span>
+                    <span class="sponsor-type">Partenaire Bancaire</span>
+                </div>
+                <div class="sponsor-card">
+                    <div class="sponsor-logo"><i class="fas fa-industry"></i></div>
+                    <span class="sponsor-name">Groupe Poulina</span>
+                    <span class="sponsor-type">Sponsor Principal</span>
+                </div>
+                <div class="sponsor-card">
+                    <div class="sponsor-logo"><i class="fas fa-signal"></i></div>
+                    <span class="sponsor-name">Ooredoo</span>
+                    <span class="sponsor-type">Partenaire Télécom</span>
+                </div>
+                <div class="sponsor-card">
+                    <div class="sponsor-logo"><i class="fas fa-plane"></i></div>
+                    <span class="sponsor-name">Tunisair</span>
+                    <span class="sponsor-type">Partenaire Transport</span>
+                </div>
+                <div class="sponsor-card">
+                    <div class="sponsor-logo"><i class="fas fa-hospital"></i></div>
+                    <span class="sponsor-name">Clinique Les Oliviers</span>
+                    <span class="sponsor-type">Partenaire Santé</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK LINKS SECTION -->
+    <section class="section home-section" id="quickLinks">
+        <div class="container">
+            <div class="section-header" data-reveal="up">
+                <span class="section-tag">Explorer</span>
+                <h2 class="section-title split-text">Découvrir le Club</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="quick-links-grid">
+                <a href="matchs.html" class="quick-link-card" data-reveal="up">
+                    <div class="ql-icon"><i class="fas fa-futbol"></i></div>
+                    <h3>Résultats</h3>
+                    <p>Tous les résultats des matchs</p>
+                    <span class="ql-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="calendrier.html" class="quick-link-card" data-reveal="up">
+                    <div class="ql-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3>Calendrier</h3>
+                    <p>Prochains matchs et compétitions</p>
+                    <span class="ql-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="classement.html" class="quick-link-card" data-reveal="up">
+                <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                    <div class="ql-icon"><i class="fas fa-trophy"></i></div>
+                    <h3>Classement</h3>
+                    <p>Position du club en Ligue 1</p>
+                    <span class="ql-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="effectif.html" class="quick-link-card" data-reveal="up">
+                    <div class="ql-icon"><i class="fas fa-users"></i></div>
+                    <h3>Effectif</h3>
+                    <p>Joueurs et staff technique</p>
+                    <span class="ql-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="billets.html" class="quick-link-card" data-reveal="up">
+                    <div class="ql-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <h3>Billetterie</h3>
+                    <p>Achetez vos billets</p>
+                    <span class="ql-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="abonnement.html" class="quick-link-card" data-reveal="up">
+                    <div class="ql-icon"><i class="fas fa-id-card"></i></div>
+                    <h3>Abonnement</h3>
+                    <p>Abonnez-vous pour la saison</p>
+                    <span class="ql-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE MATCH TRACKER -->
+    <section class="section live-tracker-section" id="liveTrackerSection" style="display:none;">
+        <div class="container">
+            <h2 class="section-title" data-reveal="up"><i class="fas fa-broadcast-tower"></i> Match en Direct</h2>
+            <div class="live-tracker-card" id="liveTrackerCard">
+                <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+                <div class="live-header">
+                    <span class="live-competition" id="liveCompetition"></span>
+                    <span class="live-minute" id="liveMinute"></span>
+                </div>
+                <div class="live-teams">
+                    <div class="live-team">
+                        <img src="uploads/images/css-logo.png" alt="" class="live-team-logo" id="liveHomeLogo">
+                        <span class="live-team-name" id="liveHomeTeam"></span>
+                    </div>
+                    <div class="live-score">
+                        <span id="liveHomeScore">0</span>
+                        <span class="live-sep">-</span>
+                        <span id="liveAwayScore">0</span>
+                    </div>
+                    <div class="live-team">
+                        <img src="uploads/images/css-logo.png" alt="" class="live-team-logo" id="liveAwayLogo">
+                        <span class="live-team-name" id="liveAwayTeam"></span>
+                    </div>
+                </div>
+                <div class="live-stats-bar" id="liveStatsBar">
+                    <div class="live-stat-row">
+                        <span class="ls-val" id="lsHomePoss">50%</span>
+                        <div class="ls-bar"><div class="ls-fill ls-home" id="lsPossBar" style="width:50%"></div></div>
+                        <span class="ls-val" id="lsAwayPoss">50%</span>
+                        <span class="ls-label">Possession</span>
+                    </div>
+                    <div class="live-stat-row">
+                        <span class="ls-val" id="lsHomeShots">0</span>
+                        <div class="ls-bar"><div class="ls-fill ls-home" id="lsShotsBar" style="width:50%"></div></div>
+                        <span class="ls-val" id="lsAwayShots">0</span>
+                        <span class="ls-label">Tirs</span>
+                    </div>
+                </div>
+                <div class="live-events" id="liveEvents"></div>
+                <div class="live-comments" id="liveComments"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL MEDIA FEED -->
+    <section class="section social-feed-section">
+        <div class="container">
+            <h2 class="section-title" data-reveal="up"><i class="fas fa-share-alt"></i> Réseaux Sociaux</h2>
+            <div class="social-feed-grid">
+                <a href="https://www.facebook.com/CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="social-card sc-facebook" data-reveal="up">
+                    <div class="sc-icon"><i class="fab fa-facebook-f"></i></div>
+                    <h4>Facebook</h4>
+                    <span>@CSSfaxienOfficiel</span>
+                    <div class="sc-btn">Suivre</div>
+                </a>
+                <a href="https://www.instagram.com/cssfaxien_officiel/" target="_blank" rel="noopener noreferrer" class="social-card sc-instagram" data-reveal="up">
+                    <div class="sc-icon"><i class="fab fa-instagram"></i></div>
+                    <h4>Instagram</h4>
+                    <span>@cssfaxien_officiel</span>
+                    <div class="sc-btn">Suivre</div>
+                </a>
+                <a href="https://www.tiktok.com/@cssfaxien_officiel" target="_blank" rel="noopener noreferrer" class="social-card sc-tiktok" data-reveal="up">
+                    <div class="sc-icon"><i class="fab fa-tiktok"></i></div>
+                    <h4>TikTok</h4>
+                    <span>@cssfaxien_officiel</span>
+                    <div class="sc-btn">Suivre</div>
+                </a>
+                <a href="https://www.youtube.com/@CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="social-card sc-youtube" data-reveal="up">
+                    <div class="sc-icon"><i class="fab fa-youtube"></i></div>
+                    <h4>YouTube</h4>
+                    <span>CS Sfaxien Officiel</span>
+                    <div class="sc-btn">S'abonner</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="section newsletter-section">
+        <div class="container">
+            <div class="newsletter-card" data-reveal="up">
+                <div class="newsletter-content">
+                    <div class="newsletter-icon"><i class="fas fa-envelope-open-text"></i></div>
+                    <h2>Restez Connecté !</h2>
+                    <p>Recevez les dernières actualités, résultats et offres exclusives du CS Sfaxien directement dans votre boîte mail.</p>
+                </div>
+                <form class="newsletter-form" id="newsletterForm">
+                    <div class="newsletter-inputs">
+                        <input type="text" id="nlFirstName" placeholder="Prénom (optionnel)" class="nl-input">
+                        <input type="email" id="nlEmail" placeholder="Votre adresse email *" class="nl-input" required>
+                    </div>
+                    <div class="newsletter-cats">
+                        <label><input type="checkbox" value="all" checked> Toutes</label>
+                        <label><input type="checkbox" value="matchs"> Matchs</label>
+                        <label><input type="checkbox" value="news"> Nouvelles</label>
+                        <label><input type="checkbox" value="boutique"> Boutique</label>
+                    </div>
+                    <button type="submit" class="btn newsletter-btn"><i class="fas fa-paper-plane"></i> S'abonner</button>
+                    <p class="nl-status" id="nlStatus"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- PUSH NOTIFICATION PROMPT -->
+    <div class="push-prompt" id="pushPrompt" style="display:none;">
+        <div class="push-prompt-content">
+            <i class="fas fa-bell"></i>
+            <div>
+                <strong>Activer les notifications</strong>
+                <p>Alertes buts et matchs en direct</p>
+            </div>
+            <button class="btn btn-small push-accept" id="pushAccept">Activer</button>
+            <button class="push-close" id="pushClose"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+                <path d="M0,40 C360,100 720,0 1080,50 C1260,75 1380,20 1440,40 L1440,100 L0,100 Z" fill="currentColor"/>
+            </svg>
+        </div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" data-reveal="up">
+                    <h4><i class="fas fa-futbol"></i> CS SFAXIEN</h4>
+                    <p>Club Sportif Sfaxien — Fondé le 28 mai 1928 à Sfax, Tunisie. 8 fois champion, 7 coupes nationales, 3 titres continentaux. La fierté du Sud.</p>
+                    <p class="footer-slogan">🖤🤍 النادي الرياضي الصفاقسي</p>
+                </div>
+                <div class="footer-col" data-reveal="up">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="matchs.html">Résultats</a></li>
+                        <li><a href="calendrier.html">Calendrier</a></li>
+                        <li><a href="classement.html">Classement</a></li>
+                        <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                        <li><a href="nouvelles.html">Actualités</a></li>
+                        <li><a href="effectif.html">Effectif</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col" data-reveal="up">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="boutique.html">Boutique</a></li>
+                        <li><a href="billets.html">Billetterie</a></li>
+                        <li><a href="abonnement.html">Abonnement</a></li>
+                        <li><a href="galerie.html">Galerie</a></li>
+                        <li><a href="histoire.html">Histoire</a></li>
+                        <li><a href="don.html">Faire un Don</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col" data-reveal="up">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/cssfaxien_officiel/" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@cssfaxien_officiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.youtube.com/@CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <h4 style="margin-top:1.5rem;">Contact</h4>
+                    <p><i class="fas fa-envelope"></i> contact@cssfaxien.tn</p>
+                    <p><i class="fas fa-phone"></i> +216 74 123 456</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Stade Taïeb Mhiri, Sfax 3000</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Club Sportif Sfaxien — Tous droits réservés | Fondé en 1928</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/oauth-init.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

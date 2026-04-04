@@ -1,0 +1,279 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e74c3c">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="CS Sfaxien - Informations détaillées sur le prochain match">
+    <link rel="icon" href="uploads/images/css-logo.png" type="image/png">
+    <title>Informations Match — CS Sfaxien</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Open+Sans:wght@400;600&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="match-info">
+
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-wrapper">
+            <div class="loader-cube">
+                <div class="cube-face cube-front">CSS</div>
+                <div class="cube-face cube-back">⚽</div>
+                <div class="cube-face cube-left">1928</div>
+                <div class="cube-face cube-right">🏆</div>
+                <div class="cube-face cube-top">🖤🤍</div>
+                <div class="cube-face cube-bottom">SFAX</div>
+            </div>
+            <div class="loader-glitch" data-text="CS SFAXIEN">CS SFAXIEN</div>
+            <div class="loader-progress"><div class="loader-progress-bar" id="loaderBar"></div></div>
+            <div class="loader-percent" id="loaderPercent">0%</div>
+        </div>
+        <div class="loader-blob loader-blob-1"></div>
+        <div class="loader-blob loader-blob-2"></div>
+        <div class="loader-blob loader-blob-3"></div>
+    </div>
+
+    <header class="main-header" id="mainHeader">
+        <div class="container header-content">
+            <a href="index.html" class="logo magnetic" data-strength="20">
+                <div class="logo-icon-wrap"><img src="uploads/images/css-logo.png" alt="CS Sfaxien" class="logo-icon"><div class="logo-ring"></div></div>
+                <span class="logo-text">CS <strong>SFAXIEN</strong></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <div class="nav-indicator" id="navIndicator"></div>
+                <a href="index.html" class="nav-link" data-section="accueil"><span class="nav-link-inner">Accueil</span></a>
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle"><span>Compétition</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="matchs.html" class="nav-link" data-section="matchs"><i class="fas fa-futbol"></i> <span>Matchs</span></a>
+                        <a href="calendrier.html" class="nav-link" data-section="fixtures"><i class="fas fa-calendar-alt"></i> <span>Calendrier</span></a>
+                        <a href="classement.html" class="nav-link" data-section="classement"><i class="fas fa-list-ol"></i> <span>Classement</span></a>
+                        <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                    </div>
+                </div>
+                <a href="boutique.html" class="nav-link" data-section="boutique"><span class="nav-link-inner">Boutique</span></a>
+                <a href="nouvelles.html" class="nav-link" data-section="nouvelles"><span class="nav-link-inner">Nouvelles</span></a>
+                <a href="galerie.html" class="nav-link" data-section="galerie"><span class="nav-link-inner">Galerie</span></a>
+                <a href="effectif.html" class="nav-link" data-section="effectif"><span class="nav-link-inner">Effectif</span></a>
+                <a href="histoire.html" class="nav-link" data-section="histoire"><span class="nav-link-inner">Histoire</span></a>
+                <div class="nav-dropdown active">
+                    <button class="nav-dropdown-toggle"><span>Services</span> <i class="fas fa-chevron-down"></i></button>
+                    <div class="nav-dropdown-menu">
+                        <a href="billets.html" class="nav-link" data-section="billets"><i class="fas fa-ticket-alt"></i> <span>Billetterie</span></a>
+                        <a href="abonnement.html" class="nav-link" data-section="abonnement"><i class="fas fa-id-card"></i> <span>Abonnement</span></a>
+                        <a href="don.html" class="nav-link" data-section="don"><i class="fas fa-hand-holding-heart"></i> <span>Don</span></a>
+                        <a href="sections.html" class="nav-link" data-section="sections"><i class="fas fa-medal"></i> <span>Sections Sportives</span></a>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-actions">
+                <a href="dashboard.html" class="user-account-btn" id="userAccountBtn" title="Mon Espace">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-btn-name" id="userBtnName">Connexion</span>
+                </a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><div class="hamburger-inner"><span></span><span></span><span></span></div></button>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="page-hero-bg"></div>
+        <div class="page-hero-overlay"></div>
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="page-hero-tag"><i class="fas fa-info-circle"></i> <span>Prochain Match</span></span>
+                <h1 class="page-hero-title">Informations Match</h1>
+                <p class="page-hero-subtitle">Toutes les informations sur le prochain match du CS Sfaxien</p>
+                <div class="page-breadcrumb">
+                    <a href="index.html">Accueil</a> <i class="fas fa-chevron-right"></i> <span>Info Match</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEXT MATCH DETAIL -->
+    <section class="section" id="matchInfo">
+        <div class="container">
+            <!-- Main Match Card -->
+            <div class="mi-main-card" data-reveal="up">
+                <div class="mi-competition">
+                    <span class="mi-comp-badge"><i class="fas fa-trophy"></i> Ligue 1 Tunisienne — Journée 22</span>
+                </div>
+                <div class="mi-teams">
+                    <div class="mi-team mi-home">
+                        <div class="mi-team-logo"><i class="fas fa-futbol"></i></div>
+                        <div class="mi-team-name">CS Sfaxien</div>
+                        <span class="mi-team-badge">Domicile</span>
+                    </div>
+                    <div class="mi-vs">
+                        <div class="mi-countdown" id="miCountdown">
+                            <div class="mi-count-item"><span class="mi-count-num" id="miDays">00</span><span class="mi-count-lbl">Jours</span></div>
+                            <div class="mi-count-sep">:</div>
+                            <div class="mi-count-item"><span class="mi-count-num" id="miHours">00</span><span class="mi-count-lbl">Heures</span></div>
+                            <div class="mi-count-sep">:</div>
+                            <div class="mi-count-item"><span class="mi-count-num" id="miMinutes">00</span><span class="mi-count-lbl">Min</span></div>
+                            <div class="mi-count-sep">:</div>
+                            <div class="mi-count-item"><span class="mi-count-num" id="miSeconds">00</span><span class="mi-count-lbl">Sec</span></div>
+                        </div>
+                        <div class="mi-date-time">
+                            <span class="mi-date" id="miDate">Samedi 15 Mars 2026</span>
+                            <span class="mi-time" id="miTime">16:00</span>
+                        </div>
+                    </div>
+                    <div class="mi-team mi-away">
+                        <div class="mi-team-logo"><i class="fas fa-shield-halved"></i></div>
+                        <div class="mi-team-name" id="miOpponent">Espérance de Tunis</div>
+                        <span class="mi-team-badge mi-away-badge">Extérieur</span>
+                    </div>
+                </div>
+                <div class="mi-actions">
+                    <a href="billets.html" class="mi-action-btn mi-buy-btn">
+                        <i class="fas fa-ticket-alt"></i> <span>Acheter un Billet</span>
+                    </a>
+                    <button class="mi-action-btn mi-remind-btn" id="miRemindBtn">
+                        <i class="fas fa-bell"></i> <span>Me Rappeler</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Match Info Grid -->
+            <div class="section-header" data-reveal="up" style="margin-top: 60px;">
+                <span class="section-tag">Détails</span>
+                <h2 class="section-title split-text">Informations Pratiques</h2>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="mi-info-grid">
+                <div class="mi-info-card" data-reveal="up">
+                    <div class="mi-info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Lieu</h4>
+                    <p class="mi-info-main">Stade Taïeb Mhiri</p>
+                    <p class="mi-info-sub">Route de Tunis, Sfax 3000</p>
+                </div>
+                <div class="mi-info-card" data-reveal="up">
+                    <div class="mi-info-icon"><i class="fas fa-clock"></i></div>
+                    <h4>Horaires</h4>
+                    <p class="mi-info-main">Coup d'envoi : 16h00</p>
+                    <p class="mi-info-sub">Ouverture des portes : 14h00</p>
+                </div>
+                <div class="mi-info-card" data-reveal="up">
+                    <div class="mi-info-icon"><i class="fas fa-tv"></i></div>
+                    <h4>Diffusion TV</h4>
+                    <p class="mi-info-main">Al Wataniya 1</p>
+                    <p class="mi-info-sub">Commentaire en arabe</p>
+                </div>
+                <div class="mi-info-card" data-reveal="up">
+                    <div class="mi-info-icon"><i class="fas fa-user-tie"></i></div>
+                    <h4>Arbitre</h4>
+                    <p class="mi-info-main">Naïm Hosni</p>
+                    <p class="mi-info-sub">Arbitre FIFA</p>
+                </div>
+                <div class="mi-info-card" data-reveal="up">
+                    <div class="mi-info-icon"><i class="fas fa-users"></i></div>
+                    <h4>Capacité</h4>
+                    <p class="mi-info-main">25,000 places</p>
+                    <p class="mi-info-sub">~18,000 disponibles</p>
+                </div>
+                <div class="mi-info-card" data-reveal="up">
+                    <div class="mi-info-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <h4>Météo Prévue</h4>
+                    <p class="mi-info-main">22°C — Ensoleillé</p>
+                    <p class="mi-info-sub">Vent léger, 8 km/h</p>
+                </div>
+            </div>
+
+            <!-- Head to Head -->
+            <div class="section-header" data-reveal="up" style="margin-top: 60px;">
+                <span class="section-tag">Historique</span>
+                <h2 class="section-title split-text">Confrontations Directes</h2>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="mi-h2h-section" data-reveal="up">
+                <div class="mi-h2h-stats">
+                    <div class="mi-h2h-stat">
+                        <span class="mi-h2h-num">45</span>
+                        <span class="mi-h2h-lbl">Matchs Joués</span>
+                    </div>
+                    <div class="mi-h2h-stat mi-h2h-win">
+                        <span class="mi-h2h-num">18</span>
+                        <span class="mi-h2h-lbl">Victoires CSS</span>
+                    </div>
+                    <div class="mi-h2h-stat">
+                        <span class="mi-h2h-num">12</span>
+                        <span class="mi-h2h-lbl">Nuls</span>
+                    </div>
+                    <div class="mi-h2h-stat">
+                        <span class="mi-h2h-num">15</span>
+                        <span class="mi-h2h-lbl">Défaites CSS</span>
+                    </div>
+                </div>
+                <div class="mi-h2h-chart">
+                    <div class="mi-h2h-bar">
+                        <div class="mi-h2h-fill mi-win-fill" style="width: 40%;"><span>40%</span></div>
+                        <div class="mi-h2h-fill mi-draw-fill" style="width: 27%;"><span>27%</span></div>
+                        <div class="mi-h2h-fill mi-loss-fill" style="width: 33%;"><span>33%</span></div>
+                    </div>
+                    <div class="mi-h2h-legend">
+                        <span><span class="mi-legend-dot mi-win-dot"></span> Victoires</span>
+                        <span><span class="mi-legend-dot mi-draw-dot"></span> Nuls</span>
+                        <span><span class="mi-legend-dot mi-loss-dot"></span> Défaites</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last 5 Meetings -->
+            <div class="mi-last-meetings" data-reveal="up">
+                <h4 class="mi-sub-title"><i class="fas fa-history"></i> 5 Dernières Rencontres</h4>
+                <div class="mi-meetings-grid" id="miMeetingsGrid">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <!-- Predicted Lineups -->
+            <div class="section-header" data-reveal="up" style="margin-top: 60px;">
+                <span class="section-tag">Composition</span>
+                <h2 class="section-title split-text">Composition Probable</h2>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="mi-lineup-section" data-reveal="up">
+                <div class="mi-formation-badge"><i class="fas fa-chess-board"></i> 4-3-3</div>
+                <div class="mi-lineup-field">
+                    <div class="mi-field-bg">
+                        <div class="mi-field-center-circle"></div>
+                        <div class="mi-field-center-line"></div>
+                        <div class="mi-field-penalty-top"></div>
+                        <div class="mi-field-penalty-bottom"></div>
+                    </div>
+                    <div class="mi-lineup-grid" id="miLineupGrid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="footer-wave"><svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,40 C360,100 720,0 1080,50 C1260,75 1380,20 1440,40 L1440,100 L0,100 Z" fill="currentColor"/></svg></div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" data-reveal="up"><h4><i class="fas fa-futbol"></i> CS SFAXIEN</h4><p>Club Sportif Sfaxien — Fondé le 28 mai 1928 à Sfax. La fierté du Sud.</p><p class="footer-slogan">🖤🤍 النادي الرياضي الصفاقسي</p></div>
+                <div class="footer-col" data-reveal="up"><h4>Navigation</h4><ul><li><a href="index.html">Accueil</a></li><li><a href="matchs.html">Résultats</a></li><li><a href="calendrier.html">Calendrier</a></li><li><a href="classement.html">Classement</a></li><li><a href="nouvelles.html">Actualités</a></li><li><a href="effectif.html">Effectif</a></li></ul></div>
+                <a href="match-info.html" class="nav-link" data-section="match-info"><i class="fas fa-futbol"></i> <span>Match Info</span></a>
+                <div class="footer-col" data-reveal="up"><h4>Services</h4><ul><li><a href="boutique.html">Boutique</a></li><li><a href="billets.html">Billetterie</a></li><li><a href="abonnement.html">Abonnement</a></li><li><a href="galerie.html">Galerie</a></li><li><a href="histoire.html">Histoire</a></li><li><a href="don.html">Faire un Don</a></li></ul></div>
+                <div class="footer-col" data-reveal="up"><h4>Suivez-nous</h4><div class="social-links"><a href="https://www.facebook.com/CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Facebook"><i class="fab fa-facebook"></i></a><a href="https://www.instagram.com/cssfaxien_officiel/" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="https://www.tiktok.com/@cssfaxien_officiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><a href="https://www.youtube.com/@CSSfaxienOfficiel" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="YouTube"><i class="fab fa-youtube"></i></a><a href="https://x.com/CSSfaxien" target="_blank" rel="noopener noreferrer" class="magnetic" data-strength="15" aria-label="X"><i class="fab fa-x-twitter"></i></a></div><h4 style="margin-top:1.5rem;">Contact</h4><p><i class="fas fa-envelope"></i> contact@cssfaxien.tn</p><p><i class="fas fa-phone"></i> +216 74 123 456</p><p><i class="fas fa-map-marker-alt"></i> Stade Taïeb Mhiri, Sfax 3000</p></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Club Sportif Sfaxien — Tous droits réservés | Fondé en 1928</p></div>
+        </div>
+    </footer>
+<script src="js/oauth-init.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

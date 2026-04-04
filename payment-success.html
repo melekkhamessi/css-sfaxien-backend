@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement — CS Sfaxien</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .payment-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); padding: 20px; }
+        .payment-card { background: #1e1e2e; border-radius: 20px; padding: 50px 40px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .payment-icon { font-size: 80px; margin-bottom: 20px; }
+        .payment-icon.success { color: #4CAF50; }
+        .payment-icon.loading { color: #D4A843; animation: pulse 1.5s infinite; }
+        .payment-icon.error { color: #e74c3c; }
+        @keyframes pulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.1); opacity:0.7; } }
+        .payment-card h1 { color: #fff; font-size: 1.8rem; margin-bottom: 10px; }
+        .payment-card p { color: #aaa; font-size: 1rem; margin-bottom: 25px; }
+        .payment-receipt { background: #16162a; border-radius: 12px; padding: 20px; margin: 25px 0; text-align: left; }
+        .payment-receipt .receipt-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a4a; color: #ccc; }
+        .payment-receipt .receipt-line:last-child { border-bottom: none; }
+        .payment-receipt .receipt-label { color: #888; }
+        .payment-receipt .receipt-val { color: #fff; font-weight: 600; }
+        .payment-receipt .receipt-total { color: #D4A843; font-size: 1.2em; }
+        .payment-actions { display: flex; gap: 12px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
+        .payment-actions a { padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .payment-actions .btn-primary { background: linear-gradient(135deg, #D4A843, #c4963a); color: #000; }
+        .payment-actions .btn-ghost { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid #444; }
+        .payment-actions a:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,168,67,0.3); }
+        .test-badge { background: #ff9800; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="payment-page">
+        <div class="payment-card" id="paymentCard">
+            <div class="payment-icon loading"><i class="fas fa-spinner fa-spin"></i></div>
+            <h1>Vérification du paiement...</h1>
+            <p>Veuillez patienter pendant que nous confirmons votre transaction.</p>
+        </div>
+    </div>
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        async function verifyPayment() {
+            const params = new URLSearchParams(window.location.search);
+            const paymentId = params.get('payment_id');
+            const mode = params.get('mode');
+
+            if (!paymentId) {
+                showError('Aucun identifiant de paiement trouvé.');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + '/payment/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId })
+                });
+                const data = await res.json();
+
+                if (data.success && data.status === 'completed') {
+                    showSuccess(data.order, mode === 'test');
+                } else {
+                    showError('Le paiement n\'a pas pu être vérifié. Veuillez contacter le support.');
+                }
+            } catch (err) {
+                showError('Erreur de connexion. Veuillez réessayer.');
+            }
+        }
+
+        function showSuccess(order, isTest) {
+            const card = document.getElementById('paymentCard');
+            const itemsHtml = order.items.map(i => `
+                <div class="receipt-line">
+                    <span class="receipt-label">${i.label}</span>
+                    <span class="receipt-val">${(i.unitPrice * i.quantity).toFixed(0)} TND</span>
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                ${isTest ? '<span class="test-badge"><i class="fas fa-flask"></i> Mode Test</span>' : ''}
+                <div class="payment-icon success"><i class="fas fa-check-circle"></i></div>
+                <h1>Paiement confirmé !</h1>
+                <p>Votre transaction a été traitée avec succès.</p>
+                <div class="payment-receipt">
+                    ${itemsHtml}
+                    <div class="receipt-line">
+                        <span class="receipt-label">Total payé</span>
+                        <span class="receipt-val receipt-total">${order.total.toFixed(0)} TND</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="receipt-label">Référence</span>
+                        <span class="receipt-val">${order.reference}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="receipt-label">Méthode</span>
+                        <span class="receipt-val"><i class="fas fa-money-bill-wave"></i> Flouci</span>
+                    </div>
+                </div>
+                <div class="payment-actions">
+                    <a href="index.html" class="btn-primary"><i class="fas fa-home"></i> Accueil</a>
+                    <a href="boutique.html" class="btn-ghost"><i class="fas fa-store"></i> Boutique</a>
+                </div>
+            `;
+        }
+
+        function showError(msg) {
+            const card = document.getElementById('paymentCard');
+            card.innerHTML = `
+                <div class="payment-icon error"><i class="fas fa-times-circle"></i></div>
+                <h1>Paiement échoué</h1>
+                <p>${msg}</p>
+                <div class="payment-actions">
+                    <a href="index.html" class="btn-primary"><i class="fas fa-home"></i> Accueil</a>
+                    <a href="javascript:history.back()" class="btn-ghost"><i class="fas fa-arrow-left"></i> Réessayer</a>
+                </div>
+            `;
+        }
+
+        verifyPayment();
+    </script>
+</body>
+</html>
