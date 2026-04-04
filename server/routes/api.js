@@ -1819,7 +1819,7 @@ router.post('/football-api/sync-all', authMiddleware, async (req, res) => {
         const apiKey = await footballApi.getApiKey();
         const teamId = await footballApi.getTeamId();
         const leagueId = await footballApi.getLeagueId();
-        const season = footballApi.getCurrentSeason();
+        const season = req.body.season || footballApi.getCurrentSeason();
         const results = { standings: 0, fixtures: 0, matches: 0, matchesUpdated: 0 };
 
         // 1. Sync standings
